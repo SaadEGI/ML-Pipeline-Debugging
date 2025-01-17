@@ -1,0 +1,26 @@
+[
+  {
+    "issue_number": 1,
+    "issue_description": "The 'native-country' column is being replaced with 'North America' for all rows, which is incorrect if the dataset contains information about individuals from different countries.",
+    "resolved": "Yes",
+    "explanation": "The corrected code now applies a function 'spatial_aggregation' to the 'native-country' column that only replaces 'United-States', 'Canada', and 'Mexico' with 'North America', instead of replacing all countries. This resolves the issue of incorrectly labeling all countries as 'North America'."
+  },
+  {
+    "issue_number": 2,
+    "issue_description": "The code does not handle the case where the 'salary' column could be of non-numeric type. If the 'salary' column contains non-numeric values, the train_test_split function will fail.",
+    "resolved": "No",
+    "explanation": "The corrected code still does not include any explicit handling or checking of the 'salary' column's data type before the train_test_split function is called. If the 'salary' column contains non-numeric values, the code may still fail."
+  },
+  {
+    "issue_number": 3,
+    "issue_description": "The code does not handle potential missing values in the 'salary' column. If there are missing values, the model training will fail.",
+    "resolved": "No",
+    "explanation": "The corrected code still does not include any explicit handling or checking for missing values in the 'salary' column before the train_test_split function is called. If the 'salary' column contains missing values, the code may still fail."
+  },
+  {
+    "issue_number": 4,
+    "issue_description": "The code does not handle potential outliers in the numeric features. Outliers can significantly affect the performance of the model.",
+    "resolved": "No",
+    "explanation": "The corrected code still does not include any explicit handling or checking for outliers in the numeric features. If the numeric features contain outliers, they may still significantly affect the performance of the model."
+  }
+]
