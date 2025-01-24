@@ -1,7 +1,9 @@
 [
     [
-        false,
-        [],
+        true,
+        [
+            31
+        ],
         "OpenAI GPT 4",
         0
     ],
@@ -16,8 +18,7 @@
     [
         true,
         [
-            31,
-            42
+            31
         ],
         "DeepSeek R1",
         0

@@ -48,19 +48,19 @@ def add_line_numbers(code):
     return '\n'.join(numbered_lines)
 
 
-def create_prompt_with_issue_description(issue_description, code):
+def create_prompt_with_issue_description(issue_description,issue_description_full, code):
     prompt = f"""
     You are an AI assistant that analyzes Python machine learning pipeline code to identify whether a specific issue is present.
 
     The code includes line numbers (e.g., '1| ...') for reference.
     When identifying issues:
     - ALWAYS specify line numbers using the provided numbering
-    - An issue may affect MULTIPLE LINES - list ALL relevant line numbers
+    - The issue may affect MULTIPLE LINES - list ALL relevant line numbers
     ```python
     {code}
     ```
 
-    Check specifically for  {issue_description.lower()}
+    Check specifically for {issue_description.lower()}, here is a description of the issue: {issue_description_full}
     
     Please output the results in the following JSON format (without any code fences or additional text):
 
@@ -101,8 +101,7 @@ def check_code_with_deepseek(prompt, reason):
     else:
         response = client_deepseek_r1.chat.completions.create(
             model="deepseek-reasoner",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.6,
+            messages=[{"role": "user", "content": prompt}]
 
         )
         output = response.choices[0].message.content
@@ -167,7 +166,8 @@ def process_model_output(output, model_name, index_i, clean=False):
 
 def main():
     pipelines = ["corrupted_pipelines/example-0.py", "corrupted_pipelines/example-0-annotation.py"]
-    issue_descriptions = [
+    issue_descriptions = ["Aggregation errors", "Annotation errors"]
+    issue_descriptions_full = [
         "aggregation errors occur when data is grouped or transformed in a way that introduces inaccuracies or misrepresents the underlying data distribution"
         ,
         "Annotation errors arise when the labeling of data points introduces inaccuracies or biases into the dataset."]
@@ -179,7 +179,7 @@ def main():
         original_code = read_code_from_file(pipeline)
         numbered_code = add_line_numbers(original_code)
         save_numbered_code(numbered_code, i)
-        prompt = create_prompt_with_issue_description(issue_descriptions[i], numbered_code)
+        prompt = create_prompt_with_issue_description(issue_descriptions[i],issue_descriptions_full[i], numbered_code)
 
         # OpenAI GPT-4
         output_gpt4 = check_code_with_gpt4(prompt)
@@ -308,8 +308,13 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    # Save the table as an image
-    fig.savefig('results/table.png', bbox_inches='tight', dpi=300)
+    if os.path.isfile('results/table.png'):
+        i = 1
+        while os.path.isfile(f"results/table_{i}.png"):
+            i += 1
+        plt.savefig(f"results/table_{i}.png")
+    else:
+        plt.savefig('results/table_1.png')
 
 
 if __name__ == "__main__":
