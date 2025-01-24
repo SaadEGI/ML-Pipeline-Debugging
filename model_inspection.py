@@ -78,7 +78,8 @@ def check_code_with_gpt4(prompt):
         model="gpt-4",
         messages=[
             {"role": "user", "content": prompt}
-        ]
+        ],
+        temperature=0.6
     )
     output = response.choices[0].message.content
     return output
@@ -92,6 +93,7 @@ def check_code_with_deepseek(prompt, reason):
             messages=[
                 {"role": "user", "content": prompt}
             ],
+            temperature=0.6,
             stream=False
         )
         output = response.choices[0].message.content
@@ -99,7 +101,9 @@ def check_code_with_deepseek(prompt, reason):
     else:
         response = client_deepseek_r1.chat.completions.create(
             model="deepseek-reasoner",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.6,
+
         )
         output = response.choices[0].message.content
         return output
