@@ -1,0 +1,43 @@
+[
+    [
+        false,
+        [],
+        "OpenAI GPT 4",
+        0
+    ],
+    [
+        true,
+        [
+            31
+        ],
+        "DeepSeek V3",
+        0
+    ],
+    [
+        true,
+        [
+            31,
+            42
+        ],
+        "DeepSeek R1",
+        0
+    ],
+    [
+        false,
+        [],
+        "OpenAI GPT 4",
+        1
+    ],
+    [
+        false,
+        [],
+        "DeepSeek V3",
+        1
+    ],
+    [
+        false,
+        [],
+        "DeepSeek R1",
+        1
+    ]
+]

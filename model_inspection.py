@@ -1,9 +1,19 @@
-import openai
 import json
 import os
+import re
 
+import matplotlib.pyplot as plt
+import numpy as np
+import openai
+import pandas as pd
+from dotenv import load_dotenv
+from openai import OpenAI
 
+load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+client_deepseek = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
+client_deepseek_r1 = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com/v1/")
 
 
 def read_code_from_file(file_path):
@@ -19,208 +29,283 @@ def read_code_from_file(file_path):
         return ""
 
 
-def analyze_code(prompt):
-    response = openai.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0
-    )
-    output = response.choices[0].message.content
-    return output
+def add_line_numbers(code):
+    """Add aligned line numbers to code display"""
+    lines = code.split('\n')
+    if not lines:
+        return ""
+
+    # Calculate padding based on total lines
+    line_count = len(lines)
+    num_width = len(str(line_count))
+
+    # Create formatted lines with numbers
+    numbered_lines = [
+        f"{i + 1:>{num_width}}| {line}"
+        for i, line in enumerate(lines)
+    ]
+
+    return '\n'.join(numbered_lines)
+
 
 def create_prompt_with_issue_description(issue_description, code):
     prompt = f"""
-          You are an AI assistant that analyzes Python machine learning pipeline code to identify potential issues related to the code, data, and transformations, and provide actionable feedback for correction.
+    You are an AI assistant that analyzes Python machine learning pipeline code to identify whether a specific issue is present.
 
-          Given the following pipeline code:{os.linesep}
-          ```python{os.linesep}
-          {code}{os.linesep}
-          ```
-          The following issue description is provided:{os.linesep}{issue_description}{os.linesep}
+    The code includes line numbers (e.g., '1| ...') for reference.
+    When identifying issues:
+    - ALWAYS specify line numbers using the provided numbering
+    - An issue may affect MULTIPLE LINES - list ALL relevant line numbers
+    ```python
+    {code}
+    ```
 
-          Analyze the code and consider the issue description. Identify any potential problems, and provide a list of detected issues with suggested fixes.
-
-          Please output the results in the following JSON format:{os.linesep}
-          [
-            {{
-              "issue_description": "Description of the problem",
-              "suggested_fix": "Suggestion on how to fix the problem",
-              "code_snippet": "Optional code illustrating the fix"
-            }},
-            ...
-          ]
-          """
-    return prompt
-
-
-def create_prompt(code):
-    prompt = f"""
-            You are an AI assistant that analyzes Python machine learning pipeline code to identify potential issues related to the code, data, and transformations, and provide actionable feedback for correction.
-
-            Given the following pipeline code:
-
-            {code}
-            ```
-
-            Analyze the code and Identify any potential problems, and provide a list of detected issues with suggested fixes.
-
-            Please output the results in the following JSON format:
-
-            [
-              {{
-                "issue_description": "Description of the problem",
-                "suggested_fix": "Suggestion on how to fix the problem",
-                "code_snippet": "Optional code illustrating the fix"
-              }},
-              ...
-            ]
-          """
-    return prompt
-
-def create_evaluation_prompt(original_code, corrected_code, feedback_list):
-
-
-    issues_and_fixes = "\n\n".join([
-        f"Issue {i + 1}:\nDescription: {feedback['issue_description']}\nSuggested Fix: {feedback['suggested_fix']}"
-        for i, feedback in enumerate(feedback_list)
-    ])
-
-    prompt = f"""
-    You are an AI assistant specialized in **evaluating** machine learning pipeline code corrections.
-
-    **Your Sole Focus**: Determine whether the **previously identified issues** have been resolved in the provided **100% corrected code**.
+    Check specifically for  {issue_description.lower()}
     
-    **Important Instructions**:
-    
-    - **Do NOT** find new issues or suggest additional improvements.
-    - **Only** assess the resolution of the issues you previously identified.
+    Please output the results in the following JSON format (without any code fences or additional text):
 
-    **Original Code and Issues:**
-    
-    Here is the original pipeline code which you analyzed before, and the issues you previously identified with your analysis:    
-    {original_code}
-    
-    Your Previous Analysis (Issues & Fixes):
- 
-    {issues_and_fixes}
-    
-    Now, here's the ground truth, a 100% corrected version of the same pipeline code:
-    
-    {corrected_code}
-    
-    Evaluation Task:
-
-    Your task is to strictly compare your previous issues with the corrected code. For each issue you previously identified, indicate whether that specific issue was resolved in the 100% correct pipeline.
-
-    Do NOT look for new problems or suggest additional fixes.
-    Focus ONLY on the issues you previously identified.
-
-    
-    Output Format
-
-    Provide the following for each issue in JSON format:
-    
-    json
-    
-    [
-      {{
-        "issue_number": 1,
-        "issue_description": "Exact description of the first issue as you previously described it.",
-        "resolved": "Yes" or "No",
-        "explanation": "Brief explanation based on the corrected code of why the issue was resolved or why it remains unresolved. Focus on what you previously identified, not on new problems."
-      }},
-      {{
-        "issue_number": 2,
-        "issue_description": "Exact description of the second issue as you previously described it.",
-        "resolved": "Yes" or "No",
-        "explanation": "Brief explanation based on the corrected code of why the issue was resolved or why it remains unresolved. Focus on what you previously identified, not on new problems."
-      }},
-      ...
-    ] 
-    Remember: Focus only on evaluating whether the issues you previously identified have been resolved in the corrected code. Do NOT analyze for new issues.  
+    {{
+    "issue_detected": boolean,
+    "affected_lines": [numbers]  #Array of ALL affected line numbers, e.g., [5, 8-10, 14]
+    }}
+    Do NOT include any code blocks, markdown, or additional explanations. Output ONLY the JSON.
     """
     return prompt
 
-def evaluate_corrections(prompt):
+
+def check_code_with_gpt4(prompt):
     response = openai.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "You are a helpful AI assistant for code evaluation."},
             {"role": "user", "content": prompt}
-        ],
-        temperature=0
+        ]
     )
     output = response.choices[0].message.content
     return output
 
-def parse_feedback(model_output):
-    try:
-        feedback = json.loads(model_output)
-        return feedback
-    except json.JSONDecodeError as e:
-        print("Failed to parse model output:", e)
-    return None
 
-def parse_evaluation_output(output):
-    try:
-        evaluation_results = json.loads(output)
-        return evaluation_results
-    except json.JSONDecodeError as e:
-        print("Failed to parse evaluation output:", e)
-        return None
+def check_code_with_deepseek(prompt, reason):
+    # reason yes or no
+    if reason == 0:
+        response = client_deepseek.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            stream=False
+        )
+        output = response.choices[0].message.content
+        return output
+    else:
+        response = client_deepseek_r1.chat.completions.create(
+            model="deepseek-reasoner",
+            messages=[{"role": "user", "content": prompt}]
+        )
+        output = response.choices[0].message.content
+        return output
+
+
+def analyse_output(output, model_name, pipeline_number):
+    feedback = json.loads(output)
+    return_values = [feedback["issue_detected"], feedback["affected_lines"], model_name,
+                     pipeline_number]
+    return return_values
+
+
+def clean_response(output):
+    # Use regex to find JSON content between code fences
+    json_pattern = re.compile(
+        r"```(?:json)?\s*(\{.*?\}|$$.*?$$)\s*```", re.DOTALL
+    )
+    match = json_pattern.search(output)
+    if match:
+        json_content = match.group(1)
+    else:
+        # If no code fences, try to find JSON content in the whole string
+        json_pattern = re.compile(r"(\{.*?\}|$$.*?$$)", re.DOTALL)
+        match = json_pattern.search(output)
+        if match:
+            json_content = match.group(1)
+        else:
+            # Unable to find JSON content
+            raise ValueError("No JSON content found in the model output.")
+
+    # Clean up the JSON string
+    json_content = json_content.strip()
+
+    return json_content
+
+
+def save_numbered_code(numbered_code, pipeline_number, output_dir="numbered_references"):
+    # Create directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Create filename with pipeline number
+    filename = f"pipeline_{pipeline_number}_numbered.txt"
+    filepath = os.path.join(output_dir, filename)
+
+    # Save to text file
+    with open(filepath, "w") as f:
+        f.write(numbered_code)
+
+    return filepath
+
+
+def process_model_output(output, model_name, index_i, clean=False):
+    cleaned = clean_response(output) if clean else output
+    data = json.loads(cleaned)
+    data.update({
+        "model_name": model_name,
+        "pipeline_number": index_i
+    })
+    return data
 
 
 def main():
-    pipeline_files = ["corrupted_pipelines/example-0.py", "corrupted_pipelines/example-0-annotation.py"]
-    corrected_files = ["corrected_pipelines/example-0-fixed.py", "corrected_pipelines/example-0-fixed-annotation.py"]
-    issue_descriptions = ["Aggregation Errors", "Annotation Errors"]
-
-    # without issue specification input
-    for i, pipeline_file in enumerate(pipeline_files):
-        original_code = read_code_from_file(pipeline_file)
-        corrected_code = read_code_from_file(corrected_files[i])
-        prompt = create_prompt(original_code)
-        model_output = analyze_code(prompt)
-        feedback_list = parse_feedback(model_output)
-
-        with open(f"feedback/initial_feedback_pipeline_{i}_without_issue_description.json", "w") as f:
-            json.dump(feedback_list, f, indent=2)
-        print("Feedback saved to feedback.json")
-        evaluation_prompt = create_evaluation_prompt(original_code, corrected_code, feedback_list)
-        evaluation_output = evaluate_corrections(evaluation_prompt)
-        evaluation_results = parse_evaluation_output(evaluation_output)
-        if evaluation_results is not None:
-            # save the results to a file with unique name
-            with open(f"results/model_evaluation_results_pipeline_{i}_without_issue_description.json", "w") as f:
-                json.dump(evaluation_results, f, indent=2)
-            print("Evaluation Results saved to evaluation_results.json")
-        else:
-            print("No evaluation results to display.")
+    pipelines = ["corrupted_pipelines/example-0.py", "corrupted_pipelines/example-0-annotation.py"]
+    issue_descriptions = [
+        "aggregation errors occur when data is grouped or transformed in a way that introduces inaccuracies or misrepresents the underlying data distribution"
+        ,
+        "Annotation errors arise when the labeling of data points introduces inaccuracies or biases into the dataset."]
+    output_res = []
+    feedback_list = []
 
     # with issue specification input
-    for i, pipeline_file in enumerate(pipeline_files):
-        for j, issue_description in enumerate(issue_descriptions):
-            original_code = read_code_from_file(pipeline_file)
-            corrected_code = read_code_from_file(corrected_files[i])
-            prompt = create_prompt_with_issue_description(issue_description, original_code)
-            model_output = analyze_code(prompt)
-            feedback_list = parse_feedback(model_output)
-            with open(f"feedback/initial_feedback_pipeline_{i}_with_issue_description_{issue_description}.json", "w") as f:
-                json.dump(feedback_list, f, indent=2)
-            print("Feedback saved to feedback.json")
-            evaluation_prompt = create_evaluation_prompt(original_code, corrected_code, feedback_list)
-            evaluation_output = evaluate_corrections(evaluation_prompt)
-            evaluation_results = parse_evaluation_output(evaluation_output)
-            if evaluation_results is not None:
-                # save the results to a file with unique name
-                with open(f"results/model_evaluation_results_pipeline_{i}_with_{issue_description}.json",
-                          "w") as f:
-                    json.dump(evaluation_results, f, indent=2)
-                print("Evaluation Results saved to evaluation_results.json")
-            else:
-                print("No evaluation results to display.")
+    for i, pipeline in enumerate(pipelines):
+        original_code = read_code_from_file(pipeline)
+        numbered_code = add_line_numbers(original_code)
+        save_numbered_code(numbered_code, i)
+        prompt = create_prompt_with_issue_description(issue_descriptions[i], numbered_code)
+
+        # OpenAI GPT-4
+        output_gpt4 = check_code_with_gpt4(prompt)
+        gpt4_data = process_model_output(output_gpt4, "gpt4", i)
+        feedback_list.append(gpt4_data)
+        output_res.append(analyse_output(output_gpt4, "OpenAI GPT 4", i))
+
+        # DeepSeek V3
+        output_v3 = check_code_with_deepseek(prompt, 0)
+        v3_data = process_model_output(output_v3, "DeepSeek V3", i, clean=True)
+        feedback_list.append(v3_data)
+        output_res.append(analyse_output(output_v3, "DeepSeek V3", i))
+
+        # DeepSeek R1
+        output_r1 = check_code_with_deepseek(prompt, 1)
+        r1_data = process_model_output(output_r1, "DeepSeek R1", i, clean=True)
+        feedback_list.append(r1_data)
+        output_res.append(analyse_output(output_r1, "DeepSeek R1", i))
+
+    with open(f"results/output_models.json", "w") as f:
+        json.dump(feedback_list, f, indent=4)
+
+        # save  output also as a json
+    with open(f"results/output_res.json", "w") as f:
+        json.dump(output_res, f, indent=4)
+
+    with open('results/output_res.json') as f:
+        output_res = json.load(f)
+    models = ['Ground Truth', 'OpenAI GPT 4', 'Deepseek V3', 'Deepseek R1']
+
+    data = {
+        'Model': models,
+        'Class_NoVuln': ["Pipeline w/ Aggr Err", "Pipeline w/ Aggr Err", "Pipeline w/ Aggr Err",
+                         "Pipeline w/ Aggr Err"],
+        'Class_Vuln': ["Pipeline w/ Ann Err", "Pipeline w/ Ann Err", "Pipeline w/ Ann Err", "Pipeline w/ Ann Err"],
+        'Aggr_detected': ["-", 0, 0, 0],
+        'Aggr_Lines': ["[28, 31]", 0, 0, 0],
+        'Ann_detected': ["-", 0, 0, 0],
+        'Ann_Lines': ["[27, 28]", 0, 0, 0]
+    }
+
+    model_mapping = {
+        "gpt4": "OpenAI GPT 4",
+        "DeepSeek V3": "Deepseek V3",
+        "DeepSeek R1": "Deepseek R1"
+    }
+
+    for entry in output_res:
+        issue_detected, affected_lines, model_key, pipeline_num = entry
+        model_name = model_mapping.get(model_key, model_key)
+
+        if model_name not in models:
+            continue
+
+        idx = models.index(model_name)
+
+        if pipeline_num == 0:  # Aggregation pipeline
+            data['Aggr_detected'][idx] = "Yes" if issue_detected else "No"
+            data['Aggr_Lines'][idx] = affected_lines
+        elif pipeline_num == 1:  # Annotation pipeline
+            data['Ann_detected'][idx] = "Yes" if issue_detected else "No"
+            data['Ann_Lines'][idx] = affected_lines
+
+    df = pd.DataFrame(data)
+
+    # Helper function to format different value types
+    def format_value(value):
+        if isinstance(value, (list, np.ndarray)):  # Handle arrays
+            return ', '.join(map(str, value))
+        elif isinstance(value, (int, float)):  # Handle numbers
+            return f"{value:.2f}" if not float(value).is_integer() else f"{int(value)}"
+        else:  # Handle strings and others
+            return str(value)
+
+    # Create figure and axes
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.axis('tight')
+    ax.axis('off')
+
+    # Prepare data for table
+    table_vals = []
+    for index, model in enumerate(df['Model']):
+        table_vals.append([
+            model,
+            df['Class_NoVuln'][index],
+            format_value(df['Aggr_detected'][index]),
+            format_value(df['Aggr_Lines'][index])
+        ])
+        table_vals.append([
+            '',  # empty for model column in second row
+            df['Class_Vuln'][index],
+            format_value(df['Ann_detected'][index]),
+            format_value(df['Ann_Lines'][index])
+        ])
+
+    # Column headers and table title
+    col_labels = ['Model', 'Pipeline', 'Issue Detected', 'Issue Lines']
+    table_title = 'TABLE I: Comparison among the different approaches.'
+
+    # Create the table
+    table = ax.table(
+        cellText=table_vals,
+        colLabels=col_labels,
+        loc='center',
+        cellLoc='center',
+        edges='horizontal'
+    )
+
+    # Table styling
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)
+    table.scale(1.2, 1.5)
+    table.auto_set_column_width(col=list(range(len(col_labels))))
+
+    for (pos, cell) in table.get_celld().items():
+        if pos[0] == 0:
+            cell.set_text_props(weight='bold')
+            cell.set_facecolor('#F0F0F0')
+
+    ax.axhline(y=len(table_vals), color='black', linewidth=1.0, clip_on=False)
+    ax.axhline(y=1, color='black', linewidth=0.7, linestyle='-', clip_on=False)
+
+    # Title
+    ax.set_title(table_title, y=1.05, fontsize=12)
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the table as an image
+    fig.savefig('results/table.png', bbox_inches='tight', dpi=300)
 
 
 if __name__ == "__main__":

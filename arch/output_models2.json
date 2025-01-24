@@ -1,0 +1,30 @@
+[
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            31
+        ],
+        "issue_type": "aggregation_error",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            31
+        ],
+        "issue_type": "data misrepresentation through over-aggregation",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 1.0
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 0.2
+    }
+]
