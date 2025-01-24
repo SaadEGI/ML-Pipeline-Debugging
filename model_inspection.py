@@ -174,6 +174,38 @@ def main():
     output_res = []
     feedback_list = []
 
+    # with issue specification input
+    for i, pipeline in enumerate(pipelines):
+        original_code = read_code_from_file(pipeline)
+        numbered_code = add_line_numbers(original_code)
+        save_numbered_code(numbered_code, i)
+        prompt = create_prompt_with_issue_description(issue_descriptions[i],issue_descriptions_full[i], numbered_code)
+
+        # OpenAI GPT-4
+        output_gpt4 = check_code_with_gpt4(prompt)
+        gpt4_data = process_model_output(output_gpt4, "gpt4", i)
+        feedback_list.append(gpt4_data)
+        output_res.append(analyse_output(output_gpt4, "OpenAI GPT 4", i))
+
+        # DeepSeek V3
+        output_v3 = check_code_with_deepseek(prompt, 0)
+        v3_data = process_model_output(output_v3, "DeepSeek V3", i, clean=True)
+        feedback_list.append(v3_data)
+        output_res.append(analyse_output(output_v3, "DeepSeek V3", i))
+
+        # DeepSeek R1
+        output_r1 = check_code_with_deepseek(prompt, 1)
+        r1_data = process_model_output(output_r1, "DeepSeek R1", i, clean=True)
+        feedback_list.append(r1_data)
+        output_res.append(analyse_output(output_r1, "DeepSeek R1", i))
+
+    with open(f"results/output_models.json", "w") as f:
+        json.dump(feedback_list, f, indent=4)
+
+        # save  output also as a json
+    with open(f"results/output_res.json", "w") as f:
+        json.dump(output_res, f, indent=4)
+
     with open('results/output_res.json') as f:
         output_res = json.load(f)
     models = ['Ground Truth', 'OpenAI GPT 4', 'Deepseek V3', 'Deepseek R1']
