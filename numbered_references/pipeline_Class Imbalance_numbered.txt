@@ -1,0 +1,30 @@
+ 1| import os
+ 2| import sys
+ 3| import pandas as pd
+ 4| from sklearn.model_selection import train_test_split
+ 5| from sklearn.linear_model import LogisticRegression
+ 6| from sklearn.metrics import classification_report
+ 7| 
+ 8| current_dir = os.path.dirname(os.path.abspath(__file__))
+ 9| parent_dir = os.path.dirname(current_dir)
+10| sys.path.append(parent_dir)
+11| 
+12| from utils import get_project_root
+13| 
+14| project_root = get_project_root()
+15| 
+16| raw_data_file = os.path.join(project_root, "datasets", "diabetes_indicator", "binary_health_indicators.csv")
+17| data = pd.read_csv(raw_data_file)
+18| 
+19| print("Class distribution in raw data:\n", data['Income'].value_counts(normalize=True).round(2))
+20| 
+21| X = data.drop('Income', axis=1)
+22| y = data['Income']
+23| X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+24| 
+25| model = LogisticRegression(max_iter=5000)
+26| model.fit(X_train, y_train)
+27| 
+28| y_pred = model.predict(X_test)
+29| print(classification_report(y_test, y_pred))
+30| 
