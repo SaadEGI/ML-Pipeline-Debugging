@@ -1,0 +1,30 @@
+[
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            21
+        ],
+        "issue_type": "data aggregation error",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            20
+        ],
+        "issue_type": "Feature transformation misrepresents data distribution",
+        "confidence": 0.95
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 1.0
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 0.1
+    }
+]

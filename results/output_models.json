@@ -1,44 +1,8 @@
 [
     {
-        "issue_detected": true,
-        "affected_lines": [
-            31
-        ],
-        "model_name": "gpt4",
-        "pipeline_number": 0
-    },
-    {
-        "issue_detected": true,
-        "affected_lines": [
-            31
-        ],
-        "model_name": "DeepSeek V3",
-        "pipeline_number": 0
-    },
-    {
-        "issue_detected": true,
-        "affected_lines": [
-            31
-        ],
-        "model_name": "DeepSeek R1",
-        "pipeline_number": 0
-    },
-    {
         "issue_detected": false,
         "affected_lines": [],
         "model_name": "gpt4",
-        "pipeline_number": 1
-    },
-    {
-        "issue_detected": false,
-        "affected_lines": [],
-        "model_name": "DeepSeek V3",
-        "pipeline_number": 1
-    },
-    {
-        "issue_detected": false,
-        "affected_lines": [],
-        "model_name": "DeepSeek R1",
-        "pipeline_number": 1
+        "pipeline_number": 0
     }
 ]

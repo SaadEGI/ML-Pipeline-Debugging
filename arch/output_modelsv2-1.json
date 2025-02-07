@@ -1,0 +1,44 @@
+[
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            31
+        ],
+        "issue_type": "aggregation error",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            31
+        ],
+        "issue_type": "aggregation_error",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": true,
+        "affected_lines": [
+            31
+        ],
+        "issue_type": "Aggregation-induced data misrepresentation",
+        "confidence": 0.9
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 1
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 1.0
+    },
+    {
+        "issue_detected": false,
+        "affected_lines": [],
+        "issue_type": "",
+        "confidence": 0.2
+    }
+]

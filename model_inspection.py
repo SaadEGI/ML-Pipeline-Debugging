@@ -12,8 +12,13 @@ from openai import OpenAI
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 client_deepseek = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
 client_deepseek_r1 = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com/v1/")
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key=openrouter_api_key,
+)
 
 
 def read_code_from_file(file_path):
@@ -107,6 +112,16 @@ def check_code_with_deepseek(prompt, reason):
         output = response.choices[0].message.content
         return output
 
+def check_code_with_openrouter(prompt):
+    response = client.chat.completions.create(
+        model="deepseek/deepseek-r1",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.6
+    )
+    output = response.choices[0].message.content
+    return output
 
 def analyse_output(output, model_name, pipeline_number):
     feedback = json.loads(output)
@@ -165,12 +180,26 @@ def process_model_output(output, model_name, index_i, clean=False):
 
 
 def main():
-    pipelines = ["corrupted_pipelines/example-0.py", "corrupted_pipelines/example-0-annotation.py"]
-    issue_descriptions = ["Aggregation errors", "Annotation errors"]
-    issue_descriptions_full = [
-        "aggregation errors occur when data is grouped or transformed in a way that introduces inaccuracies or misrepresents the underlying data distribution"
-        ,
-        "Annotation errors arise when the labeling of data points introduces inaccuracies or biases into the dataset."]
+
+    issue_names = []
+    issue_descriptions = []
+
+    with open("example_pipelines/issues_names.txt", "r") as file:
+        for line in file:
+            issue_names.append(line.strip())
+
+    with open("example_pipelines/issues_descriptions.txt", "r") as file:
+        for line in file:
+            issue_descriptions.append(line.strip())
+
+    pipelines = []
+
+    for root, dirs, files in os.walk("example_pipelines"):
+        for file in files:
+            if file == "example-0.py":
+                pipelines.append(os.path.join(root, file))
+
+
     output_res = []
     feedback_list = []
 
@@ -178,33 +207,38 @@ def main():
     for i, pipeline in enumerate(pipelines):
         original_code = read_code_from_file(pipeline)
         numbered_code = add_line_numbers(original_code)
-        save_numbered_code(numbered_code, i)
-        prompt = create_prompt_with_issue_description(issue_descriptions[i],issue_descriptions_full[i], numbered_code)
+        save_numbered_code(numbered_code, issue_names[i])
+        prompt = create_prompt_with_issue_description(issue_names[i],issue_descriptions[i], numbered_code)
 
         # OpenAI GPT-4
         output_gpt4 = check_code_with_gpt4(prompt)
+        with open(f"results/output_gpt4_{i}.json", "w") as f:
+            f.write(output_gpt4)
         gpt4_data = process_model_output(output_gpt4, "gpt4", i)
         feedback_list.append(gpt4_data)
         output_res.append(analyse_output(output_gpt4, "OpenAI GPT 4", i))
 
         # DeepSeek V3
         output_v3 = check_code_with_deepseek(prompt, 0)
+        with open(f"results/output_v3_{i}.json", "w") as f:
+            f.write(output_v3)
         v3_data = process_model_output(output_v3, "DeepSeek V3", i, clean=True)
         feedback_list.append(v3_data)
         output_res.append(analyse_output(output_v3, "DeepSeek V3", i))
 
         # DeepSeek R1
-        output_r1 = check_code_with_deepseek(prompt, 1)
+
+        output_r1 = check_code_with_openrouter(prompt)
+        with open(f"results/output_r1_{i}.json", "w") as f:
+            f.write(output_r1)
         r1_data = process_model_output(output_r1, "DeepSeek R1", i, clean=True)
         feedback_list.append(r1_data)
         output_res.append(analyse_output(output_r1, "DeepSeek R1", i))
 
-    with open(f"results/output_models.json", "w") as f:
-        json.dump(feedback_list, f, indent=4)
-
-        # save  output also as a json
-    with open(f"results/output_res.json", "w") as f:
-        json.dump(output_res, f, indent=4)
+        with open(f"results/output_models.json", "w") as f:
+            json.dump(feedback_list, f, indent=4)
+        with open(f"results/output_res.json", "w") as f:
+            json.dump(output_res, f, indent=4)
 
     with open('results/output_res.json') as f:
         output_res = json.load(f)
