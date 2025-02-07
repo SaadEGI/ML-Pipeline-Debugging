@@ -1,0 +1,1878 @@
+{
+    "nodes": {
+        "0": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 10.064790112068906,
+                    "min": 28.0,
+                    "25%": 38.0,
+                    "50%": 39.0,
+                    "75%": 50.0,
+                    "max": 53.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 189920.6,
+                    "std": 110360.86024175418,
+                    "min": 77516.0,
+                    "25%": 83311.0,
+                    "50%": 215646.0,
+                    "75%": 234721.0,
+                    "max": 338409.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.8284271247461903,
+                    "min": 7.0,
+                    "25%": 9.0,
+                    "50%": 13.0,
+                    "75%": 13.0,
+                    "max": 13.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 434.8,
+                    "std": 972.2423566169086,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2174.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 34.6,
+                    "std": 12.074767078498864,
+                    "min": 13.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": -0.13856401398574378,
+                    "fnlwgt": 0.15576016486777924,
+                    "education-num": -0.592927061281571,
+                    "capital-gain": 1.4999999999999996,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.5000000000000007
+                },
+                "kurtosis": {
+                    "age": -1.285730225723053,
+                    "fnlwgt": -1.3580214431084254,
+                    "education-num": -1.4375000000000002,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25000000000000133
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.49619179510543976,
+                    "education-num": -0.47422457099088683,
+                    "capital-gain": -0.1444087923534547,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.4665514829880846
+                },
+                "fnlwgt": {
+                    "age": -0.49619179510543976,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.2976988608307385,
+                    "capital-gain": -0.5693692628733666,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.5400155275426848
+                },
+                "education-num": {
+                    "age": -0.47422457099088683,
+                    "fnlwgt": -0.2976988608307385,
+                    "education-num": 1.0,
+                    "capital-gain": 0.39528470752104744,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.39528470752104744
+                },
+                "capital-gain": {
+                    "age": -0.1444087923534547,
+                    "fnlwgt": -0.5693692628733666,
+                    "education-num": 0.39528470752104744,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.4665514829880846,
+                    "fnlwgt": 0.5400155275426848,
+                    "education-num": -0.39528470752104744,
+                    "capital-gain": 0.25,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country",
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "1": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "occupation"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "2": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 10.064790112068906,
+                    "min": 28.0,
+                    "25%": 38.0,
+                    "50%": 39.0,
+                    "75%": 50.0,
+                    "max": 53.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 189920.6,
+                    "std": 110360.86024175418,
+                    "min": 77516.0,
+                    "25%": 83311.0,
+                    "50%": 215646.0,
+                    "75%": 234721.0,
+                    "max": 338409.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.8284271247461903,
+                    "min": 7.0,
+                    "25%": 9.0,
+                    "50%": 13.0,
+                    "75%": 13.0,
+                    "max": 13.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 434.8,
+                    "std": 972.2423566169086,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2174.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 34.6,
+                    "std": 12.074767078498864,
+                    "min": 13.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": -0.13856401398574378,
+                    "fnlwgt": 0.15576016486777924,
+                    "education-num": -0.592927061281571,
+                    "capital-gain": 1.4999999999999996,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.5000000000000007
+                },
+                "kurtosis": {
+                    "age": -1.285730225723053,
+                    "fnlwgt": -1.3580214431084254,
+                    "education-num": -1.4375000000000002,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25000000000000133
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.49619179510543976,
+                    "education-num": -0.47422457099088683,
+                    "capital-gain": -0.1444087923534547,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.4665514829880846
+                },
+                "fnlwgt": {
+                    "age": -0.49619179510543976,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.2976988608307385,
+                    "capital-gain": -0.5693692628733666,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.5400155275426848
+                },
+                "education-num": {
+                    "age": -0.47422457099088683,
+                    "fnlwgt": -0.2976988608307385,
+                    "education-num": 1.0,
+                    "capital-gain": 0.39528470752104744,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.39528470752104744
+                },
+                "capital-gain": {
+                    "age": -0.1444087923534547,
+                    "fnlwgt": -0.5693692628733666,
+                    "education-num": 0.39528470752104744,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.4665514829880846,
+                    "fnlwgt": 0.5400155275426848,
+                    "education-num": -0.39528470752104744,
+                    "capital-gain": 0.25,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country",
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "3": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "4": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 10.064790112068906,
+                    "min": 28.0,
+                    "25%": 38.0,
+                    "50%": 39.0,
+                    "75%": 50.0,
+                    "max": 53.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 189920.6,
+                    "std": 110360.86024175418,
+                    "min": 77516.0,
+                    "25%": 83311.0,
+                    "50%": 215646.0,
+                    "75%": 234721.0,
+                    "max": 338409.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.8284271247461903,
+                    "min": 7.0,
+                    "25%": 9.0,
+                    "50%": 13.0,
+                    "75%": 13.0,
+                    "max": 13.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 434.8,
+                    "std": 972.2423566169086,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2174.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 34.6,
+                    "std": 12.074767078498864,
+                    "min": 13.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": -0.13856401398574378,
+                    "fnlwgt": 0.15576016486777924,
+                    "education-num": -0.592927061281571,
+                    "capital-gain": 1.4999999999999996,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.5000000000000007
+                },
+                "kurtosis": {
+                    "age": -1.285730225723053,
+                    "fnlwgt": -1.3580214431084254,
+                    "education-num": -1.4375000000000002,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25000000000000133
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.49619179510543976,
+                    "education-num": -0.47422457099088683,
+                    "capital-gain": -0.1444087923534547,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.4665514829880846
+                },
+                "fnlwgt": {
+                    "age": -0.49619179510543976,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.2976988608307385,
+                    "capital-gain": -0.5693692628733666,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.5400155275426848
+                },
+                "education-num": {
+                    "age": -0.47422457099088683,
+                    "fnlwgt": -0.2976988608307385,
+                    "education-num": 1.0,
+                    "capital-gain": 0.39528470752104744,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.39528470752104744
+                },
+                "capital-gain": {
+                    "age": -0.1444087923534547,
+                    "fnlwgt": -0.5693692628733666,
+                    "education-num": 0.39528470752104744,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.25
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.4665514829880846,
+                    "fnlwgt": 0.5400155275426848,
+                    "education-num": -0.39528470752104744,
+                    "capital-gain": 0.25,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country",
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "5": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 45.4,
+                    "std": 21.67487024182613,
+                    "min": 26.0,
+                    "25%": 31.0,
+                    "50%": 32.0,
+                    "75%": 68.0,
+                    "max": 70.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 175175.0,
+                    "std": 119050.7151826481,
+                    "min": 35494.0,
+                    "25%": 101709.0,
+                    "50%": 161765.0,
+                    "75%": 233954.0,
+                    "max": 342953.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.345207879911715,
+                    "min": 9.0,
+                    "25%": 9.0,
+                    "50%": 10.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 410.2,
+                    "std": 917.2350843704137,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2051.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 41.4,
+                    "std": 9.736529155710468,
+                    "min": 30.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 57.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.3770561365085053,
+                    "fnlwgt": 0.2984613933207446,
+                    "education-num": 0.39005287741865136,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.4999999999999998,
+                    "hours-per-week": 0.6984934342104945
+                },
+                "kurtosis": {
+                    "age": -1.8050306181756104,
+                    "fnlwgt": -1.1111449027558327,
+                    "education-num": -1.65702479338843,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.2500000000000009,
+                    "hours-per-week": -0.35295158361373646
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.4054679237131455,
+                    "education-num": 0.22131694743640978,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.3713906763541036,
+                    "hours-per-week": -0.5814118617457372
+                },
+                "fnlwgt": {
+                    "age": -0.4054679237131455,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.01197982044772071,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.06296827266486392,
+                    "hours-per-week": 0.25209190310526175
+                },
+                "education-num": {
+                    "age": 0.22131694743640978,
+                    "fnlwgt": -0.01197982044772071,
+                    "education-num": 1.0,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.2383656473113981,
+                    "hours-per-week": 0.03284549036099308
+                },
+                "capital-gain": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "capital-loss": {
+                    "age": -0.3713906763541036,
+                    "fnlwgt": -0.06296827266486392,
+                    "education-num": -0.2383656473113981,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.0,
+                    "hours-per-week": 0.8956646637405195
+                },
+                "hours-per-week": {
+                    "age": -0.5814118617457372,
+                    "fnlwgt": 0.25209190310526175,
+                    "education-num": 0.03284549036099308,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.8956646637405195,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country",
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "6": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 12.25969004502153,
+                    "min": 29.0,
+                    "25%": 30.0,
+                    "50%": 41.0,
+                    "75%": 54.0,
+                    "max": 54.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 180940.8,
+                    "std": 73368.91536066211,
+                    "min": 124020.0,
+                    "25%": 129432.0,
+                    "50%": 134890.0,
+                    "75%": 230020.0,
+                    "max": 286342.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 10.0,
+                    "std": 4.358898943540674,
+                    "min": 3.0,
+                    "25%": 9.0,
+                    "50%": 11.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 3004.8,
+                    "std": 6718.937058791368,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 15024.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 38.4,
+                    "std": 3.577708763999663,
+                    "min": 32.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.03818943860729481,
+                    "fnlwgt": 0.6160125774200981,
+                    "education-num": -0.8504820550179567,
+                    "capital-gain": 1.4999999999999998,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.4999999999999993
+                },
+                "kurtosis": {
+                    "age": -1.746746692908262,
+                    "fnlwgt": -1.368782459811182,
+                    "education-num": -0.6281163434903045,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999778
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": 0.5223404809076139,
+                    "education-num": 0.42104278274015483,
+                    "capital-gain": 0.5654148436700688,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5654148436700692
+                },
+                "fnlwgt": {
+                    "age": 0.5223404809076139,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.05128550886409164,
+                    "capital-gain": -0.39245904642743024,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.8030793659395455
+                },
+                "education-num": {
+                    "age": 0.42104278274015483,
+                    "fnlwgt": -0.05128550886409164,
+                    "education-num": 1.0,
+                    "capital-gain": 0.38474188203193277,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5129891760425771
+                },
+                "capital-gain": {
+                    "age": 0.5654148436700688,
+                    "fnlwgt": -0.39245904642743024,
+                    "education-num": 0.38474188203193277,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999958
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.5654148436700692,
+                    "fnlwgt": -0.8030793659395455,
+                    "education-num": -0.5129891760425771,
+                    "capital-gain": 0.24999999999999958,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country",
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "7": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "8": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "salary"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "-1": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 45.4,
+                    "std": 21.67487024182613,
+                    "min": 26.0,
+                    "25%": 31.0,
+                    "50%": 32.0,
+                    "75%": 68.0,
+                    "max": 70.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 175175.0,
+                    "std": 119050.7151826481,
+                    "min": 35494.0,
+                    "25%": 101709.0,
+                    "50%": 161765.0,
+                    "75%": 233954.0,
+                    "max": 342953.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.345207879911715,
+                    "min": 9.0,
+                    "25%": 9.0,
+                    "50%": 10.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 410.2,
+                    "std": 917.2350843704137,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2051.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 41.4,
+                    "std": 9.736529155710468,
+                    "min": 30.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 57.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.3770561365085053,
+                    "fnlwgt": 0.2984613933207446,
+                    "education-num": 0.39005287741865136,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.4999999999999998,
+                    "hours-per-week": 0.6984934342104945
+                },
+                "kurtosis": {
+                    "age": -1.8050306181756104,
+                    "fnlwgt": -1.1111449027558327,
+                    "education-num": -1.65702479338843,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.2500000000000009,
+                    "hours-per-week": -0.35295158361373646
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.4054679237131455,
+                    "education-num": 0.22131694743640978,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.3713906763541036,
+                    "hours-per-week": -0.5814118617457372
+                },
+                "fnlwgt": {
+                    "age": -0.4054679237131455,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.01197982044772071,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.06296827266486392,
+                    "hours-per-week": 0.25209190310526175
+                },
+                "education-num": {
+                    "age": 0.22131694743640978,
+                    "fnlwgt": -0.01197982044772071,
+                    "education-num": 1.0,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.2383656473113981,
+                    "hours-per-week": 0.03284549036099308
+                },
+                "capital-gain": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "capital-loss": {
+                    "age": -0.3713906763541036,
+                    "fnlwgt": -0.06296827266486392,
+                    "education-num": -0.2383656473113981,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.0,
+                    "hours-per-week": 0.8956646637405195
+                },
+                "hours-per-week": {
+                    "age": -0.5814118617457372,
+                    "fnlwgt": 0.25209190310526175,
+                    "education-num": 0.03284549036099308,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.8956646637405195,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "9": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 45.4,
+                    "std": 21.67487024182613,
+                    "min": 26.0,
+                    "25%": 31.0,
+                    "50%": 32.0,
+                    "75%": 68.0,
+                    "max": 70.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 175175.0,
+                    "std": 119050.7151826481,
+                    "min": 35494.0,
+                    "25%": 101709.0,
+                    "50%": 161765.0,
+                    "75%": 233954.0,
+                    "max": 342953.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 11.0,
+                    "std": 2.345207879911715,
+                    "min": 9.0,
+                    "25%": 9.0,
+                    "50%": 10.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 410.2,
+                    "std": 917.2350843704137,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 2051.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 41.4,
+                    "std": 9.736529155710468,
+                    "min": 30.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 57.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.3770561365085053,
+                    "fnlwgt": 0.2984613933207446,
+                    "education-num": 0.39005287741865136,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.4999999999999998,
+                    "hours-per-week": 0.6984934342104945
+                },
+                "kurtosis": {
+                    "age": -1.8050306181756104,
+                    "fnlwgt": -1.1111449027558327,
+                    "education-num": -1.65702479338843,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.2500000000000009,
+                    "hours-per-week": -0.35295158361373646
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": -0.4054679237131455,
+                    "education-num": 0.22131694743640978,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.3713906763541036,
+                    "hours-per-week": -0.5814118617457372
+                },
+                "fnlwgt": {
+                    "age": -0.4054679237131455,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.01197982044772071,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.06296827266486392,
+                    "hours-per-week": 0.25209190310526175
+                },
+                "education-num": {
+                    "age": 0.22131694743640978,
+                    "fnlwgt": -0.01197982044772071,
+                    "education-num": 1.0,
+                    "capital-gain": NaN,
+                    "capital-loss": -0.2383656473113981,
+                    "hours-per-week": 0.03284549036099308
+                },
+                "capital-gain": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "capital-loss": {
+                    "age": -0.3713906763541036,
+                    "fnlwgt": -0.06296827266486392,
+                    "education-num": -0.2383656473113981,
+                    "capital-gain": NaN,
+                    "capital-loss": 1.0,
+                    "hours-per-week": 0.8956646637405195
+                },
+                "hours-per-week": {
+                    "age": -0.5814118617457372,
+                    "fnlwgt": 0.25209190310526175,
+                    "education-num": 0.03284549036099308,
+                    "capital-gain": NaN,
+                    "capital-loss": 0.8956646637405195,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "fnlwgt",
+                "education-num",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "10": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "fnlwgt",
+                "education-num",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "11": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "12": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "workclass",
+                "education",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "13": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "workclass",
+                "education",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "14": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "15": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "-2": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "16": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "-3": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "17": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "18": {
+            "data_info": {
+                "type": "<class 'NoneType'>"
+            }
+        },
+        "-4": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 12.25969004502153,
+                    "min": 29.0,
+                    "25%": 30.0,
+                    "50%": 41.0,
+                    "75%": 54.0,
+                    "max": 54.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 180940.8,
+                    "std": 73368.91536066211,
+                    "min": 124020.0,
+                    "25%": 129432.0,
+                    "50%": 134890.0,
+                    "75%": 230020.0,
+                    "max": 286342.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 10.0,
+                    "std": 4.358898943540674,
+                    "min": 3.0,
+                    "25%": 9.0,
+                    "50%": 11.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 3004.8,
+                    "std": 6718.937058791368,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 15024.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 38.4,
+                    "std": 3.577708763999663,
+                    "min": 32.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.03818943860729481,
+                    "fnlwgt": 0.6160125774200981,
+                    "education-num": -0.8504820550179567,
+                    "capital-gain": 1.4999999999999998,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.4999999999999993
+                },
+                "kurtosis": {
+                    "age": -1.746746692908262,
+                    "fnlwgt": -1.368782459811182,
+                    "education-num": -0.6281163434903045,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999778
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": 0.5223404809076139,
+                    "education-num": 0.42104278274015483,
+                    "capital-gain": 0.5654148436700688,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5654148436700692
+                },
+                "fnlwgt": {
+                    "age": 0.5223404809076139,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.05128550886409164,
+                    "capital-gain": -0.39245904642743024,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.8030793659395455
+                },
+                "education-num": {
+                    "age": 0.42104278274015483,
+                    "fnlwgt": -0.05128550886409164,
+                    "education-num": 1.0,
+                    "capital-gain": 0.38474188203193277,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5129891760425771
+                },
+                "capital-gain": {
+                    "age": 0.5654148436700688,
+                    "fnlwgt": -0.39245904642743024,
+                    "education-num": 0.38474188203193277,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999958
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.5654148436700692,
+                    "fnlwgt": -0.8030793659395455,
+                    "education-num": -0.5129891760425771,
+                    "capital-gain": 0.24999999999999958,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "workclass",
+                "fnlwgt",
+                "education",
+                "education-num",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "19": {
+            "summary_statistics": {
+                "age": {
+                    "count": 5.0,
+                    "mean": 41.6,
+                    "std": 12.25969004502153,
+                    "min": 29.0,
+                    "25%": 30.0,
+                    "50%": 41.0,
+                    "75%": 54.0,
+                    "max": 54.0
+                },
+                "fnlwgt": {
+                    "count": 5.0,
+                    "mean": 180940.8,
+                    "std": 73368.91536066211,
+                    "min": 124020.0,
+                    "25%": 129432.0,
+                    "50%": 134890.0,
+                    "75%": 230020.0,
+                    "max": 286342.0
+                },
+                "education-num": {
+                    "count": 5.0,
+                    "mean": 10.0,
+                    "std": 4.358898943540674,
+                    "min": 3.0,
+                    "25%": 9.0,
+                    "50%": 11.0,
+                    "75%": 13.0,
+                    "max": 14.0
+                },
+                "capital-gain": {
+                    "count": 5.0,
+                    "mean": 3004.8,
+                    "std": 6718.937058791368,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 15024.0
+                },
+                "capital-loss": {
+                    "count": 5.0,
+                    "mean": 0.0,
+                    "std": 0.0,
+                    "min": 0.0,
+                    "25%": 0.0,
+                    "50%": 0.0,
+                    "75%": 0.0,
+                    "max": 0.0
+                },
+                "hours-per-week": {
+                    "count": 5.0,
+                    "mean": 38.4,
+                    "std": 3.577708763999663,
+                    "min": 32.0,
+                    "25%": 40.0,
+                    "50%": 40.0,
+                    "75%": 40.0,
+                    "max": 40.0
+                }
+            },
+            "data_distribution": {
+                "skewness": {
+                    "age": 0.03818943860729481,
+                    "fnlwgt": 0.6160125774200981,
+                    "education-num": -0.8504820550179567,
+                    "capital-gain": 1.4999999999999998,
+                    "capital-loss": NaN,
+                    "hours-per-week": -1.4999999999999993
+                },
+                "kurtosis": {
+                    "age": -1.746746692908262,
+                    "fnlwgt": -1.368782459811182,
+                    "education-num": -0.6281163434903045,
+                    "capital-gain": 0.25000000000000044,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999778
+                }
+            },
+            "feature_correlation": {
+                "age": {
+                    "age": 1.0,
+                    "fnlwgt": 0.5223404809076139,
+                    "education-num": 0.42104278274015483,
+                    "capital-gain": 0.5654148436700688,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5654148436700692
+                },
+                "fnlwgt": {
+                    "age": 0.5223404809076139,
+                    "fnlwgt": 1.0,
+                    "education-num": -0.05128550886409164,
+                    "capital-gain": -0.39245904642743024,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.8030793659395455
+                },
+                "education-num": {
+                    "age": 0.42104278274015483,
+                    "fnlwgt": -0.05128550886409164,
+                    "education-num": 1.0,
+                    "capital-gain": 0.38474188203193277,
+                    "capital-loss": NaN,
+                    "hours-per-week": -0.5129891760425771
+                },
+                "capital-gain": {
+                    "age": 0.5654148436700688,
+                    "fnlwgt": -0.39245904642743024,
+                    "education-num": 0.38474188203193277,
+                    "capital-gain": 1.0,
+                    "capital-loss": NaN,
+                    "hours-per-week": 0.24999999999999958
+                },
+                "capital-loss": {
+                    "age": NaN,
+                    "fnlwgt": NaN,
+                    "education-num": NaN,
+                    "capital-gain": NaN,
+                    "capital-loss": NaN,
+                    "hours-per-week": NaN
+                },
+                "hours-per-week": {
+                    "age": -0.5654148436700692,
+                    "fnlwgt": -0.8030793659395455,
+                    "education-num": -0.5129891760425771,
+                    "capital-gain": 0.24999999999999958,
+                    "capital-loss": NaN,
+                    "hours-per-week": 1.0
+                }
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "fnlwgt",
+                "education-num",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "20": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "age",
+                "fnlwgt",
+                "education-num",
+                "capital-gain",
+                "capital-loss",
+                "hours-per-week"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "21": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "22": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "workclass",
+                "education",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "23": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "workclass",
+                "education",
+                "marital-status",
+                "occupation",
+                "relationship",
+                "race",
+                "sex",
+                "native-country"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "24": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        },
+        "25": {
+            "summary_statistics": {
+                "error": "No numeric columns available for summary statistics"
+            },
+            "data_distribution": {
+                "error": "No numeric columns available for distribution analysis"
+            },
+            "feature_correlation": {
+                "error": "No numeric columns available for correlation analysis"
+            },
+            "code": null,
+            "columns": [
+                "array"
+            ],
+            "data_info": {
+                "type": "<class 'pandas.core.frame.DataFrame'>"
+            }
+        }
+    },
+    "edges": [
+        {
+            "from": 0,
+            "to": 1
+        },
+        {
+            "from": 0,
+            "to": 2
+        },
+        {
+            "from": 2,
+            "to": 3
+        },
+        {
+            "from": 2,
+            "to": 4
+        },
+        {
+            "from": 4,
+            "to": 5
+        },
+        {
+            "from": 4,
+            "to": 6
+        },
+        {
+            "from": 5,
+            "to": 7
+        },
+        {
+            "from": 6,
+            "to": 8
+        },
+        {
+            "from": -1,
+            "to": 9
+        },
+        {
+            "from": -1,
+            "to": 12
+        },
+        {
+            "from": 9,
+            "to": 10
+        },
+        {
+            "from": 10,
+            "to": 11
+        },
+        {
+            "from": 11,
+            "to": 15
+        },
+        {
+            "from": 12,
+            "to": 13
+        },
+        {
+            "from": 13,
+            "to": 14
+        },
+        {
+            "from": 14,
+            "to": 15
+        },
+        {
+            "from": -2,
+            "to": 16
+        },
+        {
+            "from": 16,
+            "to": 18
+        },
+        {
+            "from": -3,
+            "to": 17
+        },
+        {
+            "from": 17,
+            "to": 18
+        },
+        {
+            "from": -4,
+            "to": 19
+        },
+        {
+            "from": -4,
+            "to": 22
+        },
+        {
+            "from": 19,
+            "to": 20
+        },
+        {
+            "from": 20,
+            "to": 21
+        },
+        {
+            "from": 21,
+            "to": 25
+        },
+        {
+            "from": 22,
+            "to": 23
+        },
+        {
+            "from": 23,
+            "to": 24
+        },
+        {
+            "from": 24,
+            "to": 25
+        }
+    ]
+}
