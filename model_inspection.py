@@ -2,12 +2,10 @@ import json
 import os
 import re
 
-import matplotlib.pyplot as plt
-import numpy as np
 import openai
-import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
+import dspy_run
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,8 +14,8 @@ openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 client_deepseek = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
 client_deepseek_r1 = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com/v1/")
 client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=openrouter_api_key,
+    base_url="https://openrouter.ai/api/v1",
+    api_key=openrouter_api_key,
 )
 
 
@@ -40,11 +38,9 @@ def add_line_numbers(code):
     if not lines:
         return ""
 
-    # Calculate padding based on total lines
     line_count = len(lines)
     num_width = len(str(line_count))
 
-    # Create formatted lines with numbers
     numbered_lines = [
         f"{i + 1:>{num_width}}| {line}"
         for i, line in enumerate(lines)
@@ -53,7 +49,7 @@ def add_line_numbers(code):
     return '\n'.join(numbered_lines)
 
 
-def create_prompt_with_issue_description(issue_description, issue_description_full, code):
+def create_prompt_with_issue_description(issue_name, issue_description, code, dag=None, aggregated_stats=None):
     prompt = f"""
     You are an AI assistant that analyzes Python machine learning pipeline code to identify whether a specific issue is present.
 
@@ -64,19 +60,60 @@ def create_prompt_with_issue_description(issue_description, issue_description_fu
     ```python
     {code}
     ```
+    """
+    if dag:
+        prompt += f"The DAG structure of the code is the following json file:\n{dag}\n"
+    if aggregated_stats:
+        prompt += f"The aggregated statistics of the code are the following json file:\n{aggregated_stats}\n"
 
-    Check specifically for {issue_description.lower()}, here is a description of the issue: {issue_description_full}
-    
+    prompt += f"""
+    Check specifically for {issue_name.lower()}, and detect if the issue is present.
+    """
+    if issue_description:
+        prompt += """here is a description of the issue: {issue_description_full}"""
+
+    prompt += """
     Please output the results in the following JSON format (without any code fences or additional text):
 
     {{
     "issue_detected": boolean,
-    "affected_lines": [numbers]  #Array of ALL affected line numbers, e.g., [5, 8-10, 14]
+    "affected_lines": [numbers] 
     }}
     Do NOT include any code blocks, markdown, or additional explanations. Output ONLY the JSON.
     """
     return prompt
 
+
+
+def create_prompt_with_dag(issue_name, issue_description, dag=None, aggregated_stats=None):
+    prompt = f"""
+    You are an AI assistant that analyzes Python machine learning pipeline code converted to DAG to identify whether a specific issue is present.
+
+    When identifying issues:
+    - ALWAYS specify line numbers using the provided numbering
+    - The issue may affect MULTIPLE LINES - list ALL relevant line numbers
+    """
+    if dag:
+        prompt += f"The AST Tree of the code is the following json file:\n{dag}\n"
+    if aggregated_stats:
+        prompt += f"The aggregated statistics of the code are the following json file:\n{aggregated_stats}\n"
+
+    prompt += f"""
+    Check specifically for {issue_name.lower()}, and detect if the issue is present.
+    """
+    if issue_description:
+        prompt += """here is a description of the issue: {issue_description_full}"""
+
+    prompt += """
+    Please output the results in the following JSON format (without any code fences or additional text):
+
+    {{
+    "issue_detected": boolean,
+    "affected_lines": [numbers] 
+    }}
+    Do NOT include any code blocks, markdown, or additional explanations. Output ONLY the JSON.
+    """
+    return prompt
 
 def check_code_with_gpt4(prompt):
     response = openai.chat.completions.create(
@@ -91,7 +128,6 @@ def check_code_with_gpt4(prompt):
 
 
 def check_code_with_deepseek(prompt, reason):
-    # reason yes or no
     if reason == 0:
         response = client_deepseek.chat.completions.create(
             model="deepseek-chat",
@@ -112,6 +148,7 @@ def check_code_with_deepseek(prompt, reason):
         output = response.choices[0].message.content
         return output
 
+
 def check_code_with_openrouter(prompt):
     response = client.chat.completions.create(
         model="deepseek/deepseek-r1",
@@ -123,6 +160,7 @@ def check_code_with_openrouter(prompt):
     output = response.choices[0].message.content
     return output
 
+
 def analyse_output(output, model_name, pipeline_number):
     feedback = json.loads(output)
     return_values = [feedback["issue_detected"], feedback["affected_lines"], model_name,
@@ -131,7 +169,6 @@ def analyse_output(output, model_name, pipeline_number):
 
 
 def clean_response(output):
-    # Use regex to find JSON content between code fences
     json_pattern = re.compile(
         r"```(?:json)?\s*(\{.*?\}|$$.*?$$)\s*```", re.DOTALL
     )
@@ -139,30 +176,26 @@ def clean_response(output):
     if match:
         json_content = match.group(1)
     else:
-        # If no code fences, try to find JSON content in the whole string
+
         json_pattern = re.compile(r"(\{.*?\}|$$.*?$$)", re.DOTALL)
         match = json_pattern.search(output)
         if match:
             json_content = match.group(1)
         else:
-            # Unable to find JSON content
+
             raise ValueError("No JSON content found in the model output.")
 
-    # Clean up the JSON string
     json_content = json_content.strip()
 
     return json_content
 
 
 def save_numbered_code(numbered_code, pipeline_number, output_dir="numbered_references"):
-    # Create directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    # Create filename with pipeline number
     filename = f"pipeline_{pipeline_number}_numbered.txt"
     filepath = os.path.join(output_dir, filename)
 
-    # Save to text file
     with open(filepath, "w") as f:
         f.write(numbered_code)
 
@@ -179,8 +212,19 @@ def process_model_output(output, model_name, index_i, clean=False):
     return data
 
 
-def main():
+def save_raw_output(model_output, pipeline_id, model_name, configuration, output_dir="raw_results"):
+    os.makedirs(output_dir, exist_ok=True)
 
+    filename = f"{pipeline_id}_{model_name}_{configuration}.txt"
+    filepath = os.path.join(output_dir, filename)
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(model_output)
+
+    return filepath
+
+
+def main():
     issue_names = []
     issue_descriptions = []
 
@@ -198,158 +242,61 @@ def main():
         for file in files:
             if file == "example-0.py":
                 pipelines.append(os.path.join(root, file))
-
-
+    dags = []
+    for root, dirs, files in os.walk("example_pipelines"):
+        for file in files:
+            if file == "dag_2.json":
+                dags.append(os.path.join(root, file))
     output_res = []
     feedback_list = []
 
-    # with issue specification input
     for i, pipeline in enumerate(pipelines):
         original_code = read_code_from_file(pipeline)
         numbered_code = add_line_numbers(original_code)
         save_numbered_code(numbered_code, issue_names[i])
-        prompt = create_prompt_with_issue_description(issue_names[i],issue_descriptions[i], numbered_code)
+        prompt = create_prompt_with_issue_description(issue_names[i], issue_descriptions[i], numbered_code)
+        prompt_with_dag = create_prompt_with_dag(issue_names[i], issue_descriptions[i], dags[i])
 
         # OpenAI GPT-4
         output_gpt4 = check_code_with_gpt4(prompt)
-        with open(f"results/output_gpt4_{i}.json", "w") as f:
-            f.write(output_gpt4)
-        gpt4_data = process_model_output(output_gpt4, "gpt4", i)
-        feedback_list.append(gpt4_data)
-        output_res.append(analyse_output(output_gpt4, "OpenAI GPT 4", i))
+        save_raw_output(output_gpt4, i, "gpt4", issue_names[i], "raw_results")
+        output_gpt4 = check_code_with_gpt4(prompt_with_dag)
+        save_raw_output(output_gpt4, i, "gpt4_with_dag", issue_names[i], "raw_results")
+        # with open(f"results/output_gpt4_{i}.json", "w") as f:
+        #    f.write(output_gpt4)
+        # gpt4_data = process_model_output(output_gpt4, "gpt4", i)
+        # feedback_list.append(gpt4_data)
+        # output_res.append(analyse_output(output_gpt4, "OpenAI GPT 4", i))
 
         # DeepSeek V3
         output_v3 = check_code_with_deepseek(prompt, 0)
-        with open(f"results/output_v3_{i}.json", "w") as f:
-            f.write(output_v3)
-        v3_data = process_model_output(output_v3, "DeepSeek V3", i, clean=True)
-        feedback_list.append(v3_data)
-        output_res.append(analyse_output(output_v3, "DeepSeek V3", i))
+        save_raw_output(output_v3, i, "deepseek_v3", issue_names[i], "raw_results")
+        output_v3 = check_code_with_deepseek(prompt_with_dag, 0)
+        save_raw_output(output_v3, i, "deepseek_v3_with_dag", issue_names[i], "raw_results")
+        # with open(f"results/output_v3_{i}.json", "w") as f:
+        #    f.write(output_v3)
+        # v3_data = process_model_output(output_v3, "DeepSeek V3", i, clean=True)
+        # feedback_list.append(v3_data)
+        # output_res.append(analyse_output(output_v3, "DeepSeek V3", i))
 
         # DeepSeek R1
 
         output_r1 = check_code_with_openrouter(prompt)
-        with open(f"results/output_r1_{i}.json", "w") as f:
-            f.write(output_r1)
-        r1_data = process_model_output(output_r1, "DeepSeek R1", i, clean=True)
-        feedback_list.append(r1_data)
-        output_res.append(analyse_output(output_r1, "DeepSeek R1", i))
+        save_raw_output(output_r1, i, "deepseek_r1", issue_names[i], "raw_results")
+        output_r1 = check_code_with_openrouter(prompt_with_dag)
+        save_raw_output(output_r1, i, "deepseek_r1_with_dag", issue_names[i], "raw_results")
+        # with open(f"results/output_r1_{i}.json", "w") as f:
+        #    f.write(output_r1)
+        # r1_data = process_model_output(output_r1, "DeepSeek R1", i, clean=True)
+        # feedback_list.append(r1_data)
+        # output_res.append(analyse_output(output_r1, "DeepSeek R1", i))
 
-        with open(f"results/output_models.json", "w") as f:
-            json.dump(feedback_list, f, indent=4)
-        with open(f"results/output_res.json", "w") as f:
-            json.dump(output_res, f, indent=4)
-
-    with open('results/output_res.json') as f:
-        output_res = json.load(f)
-    models = ['Ground Truth', 'OpenAI GPT 4', 'Deepseek V3', 'Deepseek R1']
-
-    data = {
-        'Model': models,
-        'Class_NoVuln': ["Pipeline w/ Aggr Err", "Pipeline w/ Aggr Err", "Pipeline w/ Aggr Err",
-                         "Pipeline w/ Aggr Err"],
-        'Class_Vuln': ["Pipeline w/ Ann Err", "Pipeline w/ Ann Err", "Pipeline w/ Ann Err", "Pipeline w/ Ann Err"],
-        'Aggr_detected': ["-", 0, 0, 0],
-        'Aggr_Lines': ["[28, 31]", 0, 0, 0],
-        'Ann_detected': ["-", 0, 0, 0],
-        'Ann_Lines': ["[27, 28]", 0, 0, 0]
-    }
-
-    model_mapping = {
-        "gpt4": "OpenAI GPT 4",
-        "DeepSeek V3": "Deepseek V3",
-        "DeepSeek R1": "Deepseek R1"
-    }
-
-    for entry in output_res:
-        issue_detected, affected_lines, model_key, pipeline_num = entry
-        model_name = model_mapping.get(model_key, model_key)
-
-        if model_name not in models:
-            continue
-
-        idx = models.index(model_name)
-
-        if pipeline_num == 0:  # Aggregation pipeline
-            data['Aggr_detected'][idx] = "Yes" if issue_detected else "No"
-            data['Aggr_Lines'][idx] = affected_lines
-        elif pipeline_num == 1:  # Annotation pipeline
-            data['Ann_detected'][idx] = "Yes" if issue_detected else "No"
-            data['Ann_Lines'][idx] = affected_lines
-
-    df = pd.DataFrame(data)
-
-    # Helper function to format different value types
-    def format_value(value):
-        if isinstance(value, (list, np.ndarray)):  # Handle arrays
-            return ', '.join(map(str, value))
-        elif isinstance(value, (int, float)):  # Handle numbers
-            return f"{value:.2f}" if not float(value).is_integer() else f"{int(value)}"
-        else:  # Handle strings and others
-            return str(value)
-
-    # Create figure and axes
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.axis('tight')
-    ax.axis('off')
-
-    # Prepare data for table
-    table_vals = []
-    for index, model in enumerate(df['Model']):
-        table_vals.append([
-            model,
-            df['Class_NoVuln'][index],
-            format_value(df['Aggr_detected'][index]),
-            format_value(df['Aggr_Lines'][index])
-        ])
-        table_vals.append([
-            '',  # empty for model column in second row
-            df['Class_Vuln'][index],
-            format_value(df['Ann_detected'][index]),
-            format_value(df['Ann_Lines'][index])
-        ])
-
-    # Column headers and table title
-    col_labels = ['Model', 'Pipeline', 'Issue Detected', 'Issue Lines']
-    table_title = 'TABLE I: Comparison among the different approaches.'
-
-    # Create the table
-    table = ax.table(
-        cellText=table_vals,
-        colLabels=col_labels,
-        loc='center',
-        cellLoc='center',
-        edges='horizontal'
-    )
-
-    # Table styling
-    table.auto_set_font_size(False)
-    table.set_fontsize(10)
-    table.scale(1.2, 1.5)
-    table.auto_set_column_width(col=list(range(len(col_labels))))
-
-    for (pos, cell) in table.get_celld().items():
-        if pos[0] == 0:
-            cell.set_text_props(weight='bold')
-            cell.set_facecolor('#F0F0F0')
-
-    ax.axhline(y=len(table_vals), color='black', linewidth=1.0, clip_on=False)
-    ax.axhline(y=1, color='black', linewidth=0.7, linestyle='-', clip_on=False)
-
-    # Title
-    ax.set_title(table_title, y=1.05, fontsize=12)
-
-    plt.tight_layout()
-
-    if os.path.isfile('results/table.png'):
-        i = 1
-        while os.path.isfile(f"results/table_{i}.png"):
-            i += 1
-        fig.savefig(f'results/table_{i}.png')
-    else:
-        fig.savefig('results/table_1.png')
-
-    plt.show()
+        # with open(f"results/output_models.json", "w") as f:
+        #    json.dump(feedback_list, f, indent=4)
+        # with open(f"results/output_res.json", "w") as f:
+        #    json.dump(output_res, f, indent=4)
+        if i == 0:
+            break
 
 
 if __name__ == "__main__":
