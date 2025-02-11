@@ -1,0 +1,179 @@
+{
+  "dag": {
+    "nodes": [
+      {
+        "id": "node1",
+        "name": "Load Data",
+        "operation": "pd.read_csv",
+        "parameters": {
+          "file_path": "datasets/adult_data/adult_data.csv"
+        },
+        "code": "raw_data_file = os.path.join(project_root, \"datasets\", \"adult_data\", \"adult_data.csv\")\ndata = pd.read_csv(raw_data_file)",
+        "code_line": "23-24"
+      },
+      {
+        "id": "node2",
+        "name": "Feature Selection",
+        "operation": "DataFrame.drop & indexing",
+        "parameters": {
+          "drop_column": "salary",
+          "target_column": "salary"
+        },
+        "code": "X = data.drop(columns=['salary'])\ny = data['salary']",
+        "code_line": "27-28"
+      },
+      {
+        "id": "node3",
+        "name": "Identify Columns",
+        "operation": "select_dtypes",
+        "parameters": {
+          "categorical": "object",
+          "numeric": "non-object"
+        },
+        "code": "categorical_cols = X.select_dtypes(include=['object']).columns\nnumeric_cols = X.select_dtypes(exclude=['object']).columns",
+        "code_line": "31-32"
+      },
+      {
+        "id": "node4",
+        "name": "Create Preprocessor",
+        "operation": "ColumnTransformer",
+        "parameters": {
+          "transformers": [
+            {
+              "name": "num",
+              "transformer": "SimpleImputer(strategy='median')",
+              "columns": "numeric_cols"
+            },
+            {
+              "name": "cat",
+              "transformer": "Pipeline",
+              "steps": [
+                {
+                  "name": "imputer",
+                  "operation": "SimpleImputer(strategy='most_frequent')"
+                },
+                {
+                  "name": "onehot",
+                  "operation": "OneHotEncoder(handle_unknown='ignore')"
+                }
+              ],
+              "columns": "categorical_cols"
+            }
+          ]
+        },
+        "code": "preprocessor = ColumnTransformer(\n    transformers=[\n        ('num', SimpleImputer(strategy='median'), numeric_cols),\n        ('cat', Pipeline(steps=[\n            ('imputer', SimpleImputer(strategy='most_frequent')),\n            ('onehot', OneHotEncoder(handle_unknown='ignore'))\n        ]), categorical_cols)\n    ])",
+        "code_line": "34-42"
+      },
+      {
+        "id": "node5",
+        "name": "Create Pipeline",
+        "operation": "Pipeline",
+        "parameters": {
+          "steps": [
+            {
+              "name": "preprocessor",
+              "operation": "node4"
+            },
+            {
+              "name": "classifier",
+              "operation": "RandomForestClassifier",
+              "parameters": {
+                "random_state": 42
+              }
+            }
+          ]
+        },
+        "code": "pipeline = Pipeline(steps=[\n    ('preprocessor', preprocessor),\n    ('classifier', RandomForestClassifier(random_state=42))\n])",
+        "code_line": "44-48"
+      },
+      {
+        "id": "node6",
+        "name": "Train-Test Split",
+        "operation": "train_test_split",
+        "parameters": {
+          "test_size": 0.2,
+          "random_state": 42,
+          "features": "X",
+          "target": "y"
+        },
+        "code": "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+        "code_line": "50-51"
+      },
+      {
+        "id": "node7",
+        "name": "Train Model",
+        "operation": "fit",
+        "parameters": {},
+        "code": "pipeline.fit(X_train, y_train)",
+        "code_line": "53-54"
+      },
+      {
+        "id": "node8",
+        "name": "Predict",
+        "operation": "predict",
+        "parameters": {},
+        "code": "y_pred = pipeline.predict(X_test)",
+        "code_line": "56-57"
+      },
+      {
+        "id": "node9",
+        "name": "Evaluate Model",
+        "operation": "Evaluation",
+        "parameters": {
+          "metrics": [
+            "accuracy_score",
+            "classification_report"
+          ]
+        },
+        "code": "print(f\"Accuracy: {accuracy_score(y_test, y_pred)}\")\nprint(f\"Classification report: {classification_report(y_test, y_pred)}\")",
+        "code_line": "58-59"
+      }
+    ],
+    "edges": [
+      {
+        "source": "node1",
+        "target": "node2"
+      },
+      {
+        "source": "node2",
+        "target": "node3"
+      },
+      {
+        "source": "node3",
+        "target": "node4"
+      },
+      {
+        "source": "node4",
+        "target": "node5"
+      },
+      {
+        "source": "node2",
+        "target": "node6"
+      },
+      {
+        "source": "node6",
+        "target": "node7"
+      },
+      {
+        "source": "node5",
+        "target": "node7"
+      },
+      {
+        "source": "node6",
+        "target": "node8"
+      },
+      {
+        "source": "node7",
+        "target": "node8"
+      },
+      {
+        "source": "node6",
+        "target": "node9"
+      },
+      {
+        "source": "node8",
+        "target": "node9"
+      }
+    ]
+  }
+}

@@ -1,0 +1,242 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "raw_data = pd.read_csv(raw_data_file)",
+                "code_line": "20"
+            },
+            {
+                "id": "node2",
+                "name": "Select Columns",
+                "operation": "select_columns",
+                "parameters": {
+                    "columns": [
+                        "sex",
+                        "dob",
+                        "age",
+                        "c_charge_degree",
+                        "race",
+                        "score_text",
+                        "priors_count",
+                        "days_b_screening_arrest",
+                        "decile_score",
+                        "is_recid",
+                        "two_year_recid",
+                        "c_jail_in",
+                        "c_jail_out"
+                    ]
+                },
+                "code": "raw_data = raw_data[\n    ['sex', 'dob', 'age', 'c_charge_degree', 'race', 'score_text', 'priors_count', 'days_b_screening_arrest',\n     'decile_score', 'is_recid', 'two_year_recid', 'c_jail_in', 'c_jail_out']]",
+                "code_line": "22-24"
+            },
+            {
+                "id": "node3",
+                "name": "Filter Data",
+                "operation": "filter_data",
+                "parameters": {
+                    "conditions": [
+                        "30 >= days_b_screening_arrest >= -30",
+                        "is_recid != -1",
+                        "c_charge_degree != 'O'",
+                        "score_text != 'N/A'"
+                    ]
+                },
+                "code": "raw_data = raw_data[(raw_data['days_b_screening_arrest'] <= 30) & (raw_data['days_b_screening_arrest'] >= -30)]\nraw_data = raw_data[raw_data['is_recid'] != -1]\nraw_data = raw_data[raw_data['c_charge_degree'] != \"O\"]\nraw_data = raw_data[raw_data['score_text'] != 'N/A']",
+                "code_line": "26-29"
+            },
+            {
+              "id": "node4",
+              "name": "Replace value",
+              "operation": "replace_value",
+              "parameters":{
+                "old_value": "Medium",
+                "new_value": "Low"
+              },
+              "code": "raw_data = raw_data.replace('Medium', \"Low\")",
+              "code_line": "31"
+
+            },
+            {
+                "id": "node5",
+                "name": "Impute and One-Hot Encode Pipeline",
+                "operation": "impute_and_onehot",
+                "parameters": {
+                    "imputer_strategy": "most_frequent"
+                },
+                "code": "impute1_and_onehot = Pipeline([('imputer1', SimpleImputer(strategy='most_frequent')),\n                               ('onehot', OneHotEncoder(handle_unknown='ignore'))])",
+                "code_line": "33-34"
+            },
+            {
+                "id": "node6",
+                "name": "Impute and Bin Pipeline",
+                "operation": "impute_and_bin",
+                "parameters": {
+                    "imputer_strategy": "mean",
+                    "n_bins": 4,
+                    "encode": "ordinal",
+                    "strategy": "uniform"
+                },
+                "code": "impute2_and_bin = Pipeline([('imputer2', SimpleImputer(strategy='mean')),\n                            ('discretizer', KBinsDiscretizer(n_bins=4, encode='ordinal', strategy='uniform'))])",
+                "code_line": "35-36"
+            },
+            {
+                "id": "node7",
+                "name": "Featurizer",
+                "operation": "featurizer",
+                "parameters": {
+                    "transformers": [
+                        ["impute1_and_onehot", ['is_recid']],
+                        ["impute2_and_bin", ['age']]
+                    ]
+                },
+                "code": "featurizer = ColumnTransformer(transformers=[\n    ('impute1_and_onehot', impute1_and_onehot, ['is_recid']),\n    ('impute2_and_bin', impute2_and_bin, ['age'])\n])",
+                "code_line": "38-41"
+            },
+            {
+              "id": "node8",
+              "name": "Prepare data",
+              "operation": "prepare_data",
+              "parameters": {},
+              "code": "data_without_labels = raw_data.copy(deep=True)\ndata_without_labels = data_without_labels.drop(['score_text'], axis=1)\n\nprepared_data = featurizer.fit_transform(data_without_labels)",
+              "code_line": "43-46"
+
+            },
+            {
+                "id": "node9",
+                "name": "Train Test Split",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "train_data, test_data, train_labels, test_labels = train_test_split(prepared_data, raw_data['score_text'], test_size=0.2, random_state=42)",
+                "code_line": "48"
+            },
+            {
+                "id": "node10",
+                "name": "Print Data Shapes",
+                "operation": "print_shapes",
+                "parameters": {},
+                "code": "print(\"Shape of training data:\", train_data.shape)\nprint(\"Shape of testing data:\", test_data.shape)",
+                "code_line": "49-50"
+            },
+            {
+                "id": "node11",
+                "name": "Binarize Labels",
+                "operation": "binarize_labels",
+                "parameters": {
+                    "classes": [
+                        "High",
+                        "Low"
+                    ]
+                },
+                "code": "train_labels = label_binarize(train_labels, classes=['High', 'Low'])\ntest_labels = label_binarize(test_labels, classes=['High', 'Low'])",
+                "code_line": "52-53"
+            },
+            {
+                "id": "node12",
+                "name": "Model Pipeline",
+                "operation": "model_pipeline",
+                "parameters": {},
+                "code": "pipeline = Pipeline([('classifier', LogisticRegression())])",
+                "code_line": "55"
+            },
+            {
+                "id": "node13",
+                "name": "Train Model",
+                "operation": "train_model",
+                "parameters": {},
+                "code": "pipeline.fit(train_data, train_labels.ravel())",
+                "code_line": "57"
+            },
+            {
+                "id": "node14",
+                "name": "Evaluate Model",
+                "operation": "evaluate_model",
+                "parameters": {},
+                "code": "print(\"Accuracy\", pipeline.score(test_data, test_labels.ravel()))",
+                "code_line": "58"
+            },
+            {
+                "id": "node15",
+                "name": "Print Classification Report",
+                "operation": "print_classification_report",
+                "parameters": {
+                    "zero_division": 0
+                },
+                "code": "print(classification_report(test_labels, pipeline.predict(test_data), zero_division=0))",
+                "code_line": "60"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+              "source": "node3",
+              "target": "node4"
+            },
+            {
+                "source": "node4",
+                "target": "node5"
+            },
+            {
+                "source": "node4",
+                "target": "node6"
+            },
+            {
+              "source": "node5",
+              "target": "node7"
+
+            },
+            {
+              "source": "node6",
+              "target": "node7"
+            },
+            {
+              "source": "node7",
+              "target":"node8"
+            },
+
+            {
+                "source": "node8",
+                "target": "node9"
+            },
+            {
+                "source": "node9",
+                "target": "node10"
+            },
+            {
+                "source": "node9",
+                "target": "node11"
+            },
+            {
+                "source": "node11",
+                "target": "node12"
+            },
+            {
+                "source": "node12",
+                "target": "node13"
+            },
+            {
+                "source": "node13",
+                "target": "node14"
+            },
+            {
+                "source": "node14",
+                "target": "node15"
+            }
+        ]
+    }
+}

@@ -1,6 +1,0 @@
-```json
-{
-    "issue_detected": false,
-    "affected_lines": []
-}
-```

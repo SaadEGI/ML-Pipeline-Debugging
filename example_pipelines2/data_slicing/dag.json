@@ -1,0 +1,240 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "raw_data = pd.read_csv(raw_data_file)",
+                "code_line": "20"
+            },
+            {
+                "id": "node2",
+                "name": "Train Test Split",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "train_data, test_data = train_test_split(raw_data, test_size=0.2, random_state=42)",
+                "code_line": "22"
+            },
+            {
+                "id": "node3",
+                "name": "Select Columns",
+                "operation": "select_columns",
+                "parameters": {
+                    "columns": [
+                        "sex",
+                        "dob",
+                        "age",
+                        "c_charge_degree",
+                        "race",
+                        "score_text",
+                        "priors_count",
+                        "days_b_screening_arrest",
+                        "decile_score",
+                        "is_recid",
+                        "two_year_recid",
+                        "c_jail_in",
+                        "c_jail_out"
+                    ]
+                },
+                "code": "columns_to_use = ['sex', 'dob', 'age', 'c_charge_degree', 'race', 'score_text', 'priors_count', 'days_b_screening_arrest',\n                  'decile_score', 'is_recid', 'two_year_recid', 'c_jail_in', 'c_jail_out']\n\ntrain_data = train_data[columns_to_use]\ntest_data = test_data[columns_to_use]",
+                "code_line": "24-28"
+            },
+            {
+                "id": "node4",
+                "name": "Print Data Shapes",
+                "operation": "print_shapes",
+                "parameters": {},
+                "code": "print(\"Shape of training data:\", train_data.shape)\nprint(\"Shape of testing data:\", test_data.shape)",
+                "code_line": "30-31"
+            },
+            {
+                "id": "node5",
+                "name": "Replace Value",
+                "operation": "replace_value",
+                "parameters":{
+                  "old_value": "Medium",
+                  "new_value": "Low"
+                },
+                "code": "train_data = train_data.replace('Medium', \"Low\")\ntest_data = test_data.replace('Medium', \"Low\")",
+                "code_line": "33-34"
+            },
+            {
+                "id": "node6",
+                "name": "Binarize Labels",
+                "operation": "binarize_labels",
+                "parameters": {
+                    "classes": [
+                        "High",
+                        "Low"
+                    ]
+                },
+                "code": "train_labels = label_binarize(train_data['score_text'], classes=['High', 'Low']).ravel()\ntest_labels = label_binarize(test_data['score_text'], classes=['High', 'Low']).ravel()",
+                "code_line": "36-37"
+            },
+            {
+                "id": "node7",
+                "name": "Drop Target Column",
+                "operation": "drop_column",
+                "parameters": {
+                  "column": "score_text"
+                },
+                "code": "train_data = train_data.drop(columns=['score_text'])\ntest_data = test_data.drop(columns=['score_text'])",
+                "code_line": "39-40"
+            },
+            {
+                "id": "node8",
+                "name": "Reset Index",
+                "operation": "reset_index",
+                "parameters": {},
+                "code": "train_data.reset_index(drop=True, inplace=True)\ntest_data.reset_index(drop=True, inplace=True)",
+                "code_line": "42-43"
+            },
+            {
+                "id": "node9",
+                "name": "Impute and One-Hot Encode Pipeline",
+                "operation": "impute_and_onehot",
+                "parameters": {
+                    "imputer_strategy": "most_frequent"
+                },
+                "code": "impute1_and_onehot = Pipeline([('imputer1', SimpleImputer(strategy='most_frequent')),\n                               ('onehot', OneHotEncoder(handle_unknown='ignore'))])",
+                "code_line": "45-46"
+            },
+            {
+                "id": "node10",
+                "name": "Impute and Bin Pipeline",
+                "operation": "impute_and_bin",
+                "parameters": {
+                    "imputer_strategy": "mean",
+                    "n_bins": 4,
+                    "encode": "ordinal",
+                    "strategy": "uniform"
+                },
+                "code": "impute2_and_bin = Pipeline([('imputer2', SimpleImputer(strategy='mean')),\n                            ('discretizer', KBinsDiscretizer(n_bins=4, encode='ordinal', strategy='uniform'))])",
+                "code_line": "47-48"
+            },
+            {
+                "id": "node11",
+                "name": "Featurizer",
+                "operation": "featurizer",
+                "parameters": {
+                   "transformers": [
+                      ["impute1_and_onehot", ['is_recid']],
+                      ["impute2_and_bin", ['age']]
+                   ]
+                },
+                "code": "featurizer = ColumnTransformer(transformers=[\n    ('impute1_and_onehot', impute1_and_onehot, ['is_recid']),\n    ('impute2_and_bin', impute2_and_bin, ['age'])\n])",
+                "code_line": "50-53"
+            },
+            {
+                "id": "node12",
+                "name": "Main Pipeline",
+                "operation": "main_pipeline",
+                "parameters": {},
+                "code": "pipeline = Pipeline(steps=[('featurizer', featurizer),\n    ('classifier', LogisticRegression())\n])",
+                "code_line": "55-57"
+            },
+            {
+                "id": "node13",
+                "name": "Train Model",
+                "operation": "train_model",
+                "parameters": {},
+                "code": "pipeline.fit(train_data, train_labels)",
+                "code_line": "59"
+            },
+            {
+                "id": "node14",
+                "name": "Evaluate Model",
+                "operation": "evaluate_model",
+                "parameters": {},
+                "code": "print(\"Model score:\", pipeline.score(test_data, test_labels))",
+                "code_line": "61"
+            },
+            {
+                "id": "node15",
+                "name": "Print Classification Report",
+                "operation": "print_classification_report",
+                "parameters": {
+                    "zero_division": 0
+                },
+                "code": "print(classification_report(test_labels, pipeline.predict(test_data), zero_division=0))",
+                "code_line": "63"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node3",
+                "target": "node4"
+            },
+            {
+                "source": "node3",
+                "target": "node5"
+            },
+            {
+                "source": "node5",
+                "target": "node6"
+            },
+            {
+              "source": "node5",
+              "target":"node7"
+            },
+            {
+                "source": "node7",
+                "target": "node8"
+            },
+            {
+                "source": "node8",
+                "target": "node9"
+            },
+            {
+                "source": "node8",
+                "target": "node10"
+            },
+            {
+              "source": "node9",
+              "target": "node11"
+            },
+            {
+              "source":"node10",
+              "target": "node11"
+            },
+
+            {
+                "source": "node11",
+                "target": "node12"
+            },
+            {
+                "source": "node6",
+                "target": "node12"
+            },
+
+            {
+                "source": "node12",
+                "target": "node13"
+            },
+            {
+                "source": "node13",
+                "target": "node14"
+            },
+            {
+                "source": "node14",
+                "target": "node15"
+            }
+
+        ]
+    }
+}

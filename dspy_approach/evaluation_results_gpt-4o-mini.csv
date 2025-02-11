@@ -1,0 +1,11 @@
+pipeline_index,ground_truth,prediction,correct
+0,Aggregation Errors,False,False
+1,Annotation Errors,False,False
+2,Class Imbalance,True,False
+3,Cross Validation Errors,False,False
+4,Data Anonymization Errors,True,False
+5,Data Filtering Errors,True,False
+6,Data Imputation Errors,True,False
+7,Data Leakage Errors,False,False
+8,Data Slicing Errors,False,False
+9,Data Splitting Errors,False,False

@@ -1,9 +1,8 @@
-Aggregation Errors
-Annotation Errors
-Class Imbalance
 Cross Validation Errors
 Data Anonymization Errors
 Data Filtering Errors
 Data Imputation Errors
 Data Leakage Errors
+Data Slicing Errors
 Data Splitting Errors
+Specification Bias

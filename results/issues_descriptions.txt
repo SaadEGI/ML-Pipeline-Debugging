@@ -1,9 +1,0 @@
-In machine learning data pipelines, aggregation errors occur when data is grouped or transformed in a way that introduces inaccuracies or misrepresents the underlying data distribution.
-In machine learning data pipelines, annotation errors occur when the labels or categorizations applied to the data are incorrect, biased, or inconsistent. These errors can stem from various sources, such as annotator biases, mislabeling, or inconsistencies in annotation guidelines.
-Class imbalance arises when there are significantly more instances of one class than others in the dataset.
-cross validation errors occur when the cross-validation process is not properly implemented or when the data is not properly split into training and validation sets.
-data anonymization errors occur when sensitive information is not properly protected or anonymized in the dataset.
-Data Filtering errors occur when data is filtered or subsetted in a way that introduces biases or distorts the underlying data distribution.
-Data imputation errors occur when missing values are filled in with inaccurate or biased estimates, leading to incorrect conclusions or predictions.
-Data leakage occurs when information from the test set is inadvertently included in the training set, leading to overly optimistic performance estimates.
-Data Splitting errors occur when the data is not properly split into training, validation, and test sets, leading to overfitting or inaccurate performance estimates.

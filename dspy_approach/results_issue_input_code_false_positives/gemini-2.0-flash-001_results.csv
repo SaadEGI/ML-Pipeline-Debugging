@@ -1,0 +1,9 @@
+pipeline_code,model,detected,confidence
+../../corrected_pipelines\cross_validation\example-0-fixed.py,gemini-2.0-flash-001,False,0.7
+../../corrected_pipelines\data_anonymization\example-0-fixed.py,gemini-2.0-flash-001,False,0.7
+../../corrected_pipelines\data_filtering\example-0-fixed.py,gemini-2.0-flash-001,True,0.7
+../../corrected_pipelines\data_imputation\example-0-fixed.py,gemini-2.0-flash-001,False,0.7
+../../corrected_pipelines\data_leakage\example-0-fixed.py,gemini-2.0-flash-001,False,0.7
+../../corrected_pipelines\data_slicing\example-0-fixed.py,gemini-2.0-flash-001,False,0.1
+../../corrected_pipelines\data_splitting\example-0-fixed.py,gemini-2.0-flash-001,False,0.7
+../../corrected_pipelines\specification_bias\example-0-fixed.py,gemini-2.0-flash-001,False,0.6

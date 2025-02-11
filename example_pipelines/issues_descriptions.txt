@@ -1,1 +1,0 @@
-In machine learning data pipelines, aggregation errors occur when data is grouped or transformed in a way that introduces inaccuracies or misrepresents the underlying data distribution.

@@ -1,0 +1,75 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "data = pd.read_csv(raw_data_file)",
+                "code_line": "21"
+            },
+            {
+                "id": "node2",
+                "name": "Random Undersampling",
+                "operation": "under_sampling",
+                "parameters": {
+                    "random_state": 42
+                },
+                "code": "rus = RandomUnderSampler(random_state=42)\nX_resampled, y_resampled = rus.fit_resample(data.drop('Diabetes_binary', axis=1), data['Diabetes_binary'])",
+                "code_line": "23-24"
+            },
+            {
+                "id": "node3",
+                "name": "Feature Selection",
+                "operation": "feature_selection",
+                "parameters": {
+                    "k": 10,
+                    "scoring_function": "f_classif"
+                },
+                "code": "selector = SelectKBest(f_classif, k=10)\nX_selected = selector.fit_transform(X_resampled, y_resampled)",
+                "code_line": "26-27"
+            },
+            {
+                "id": "node4",
+                "name": "Random Forest Classifier",
+                "operation": "classification",
+                "parameters": {
+                    "random_state": 42,
+                    "cross_validation_folds": 5
+                },
+                "code": "clf = RandomForestClassifier(random_state=42)\nscores = cross_val_score(clf, X_selected, y_resampled, cv=5)",
+                "code_line": "29-30"
+            },
+           {
+                "id": "node5",
+                "name": "Print Cross-validation scores",
+                "operation": "print_scores",
+                "parameters": {},
+                "code": "print(\"Cross-validation scores:\", scores)",
+                "code_line": "32"
+            }
+
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node3",
+                "target": "node4"
+            },
+            {
+                "source": "node4",
+                "target": "node5"
+            }
+        ]
+    }
+}

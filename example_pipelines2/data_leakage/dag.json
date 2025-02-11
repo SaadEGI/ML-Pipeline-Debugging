@@ -1,0 +1,188 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "data = pd.read_csv(raw_data_file)",
+                "code_line": "20"
+            },
+            {
+                "id": "node2",
+                "name": "Define Feature Groups",
+                "operation": "define_feature_groups",
+                "parameters": {
+                    "numeric_columns": [
+                        "age",
+                        "hours-per-week"
+                    ],
+                    "categorical_columns": [
+                        "workclass",
+                        "education",
+                        "marital-status",
+                        "occupation",
+                        "relationship",
+                        "race",
+                        "sex",
+                        "native-country"
+                    ],
+                    "target": "salary"
+                },
+                "code": "numeric_columns = ['age', 'hours-per-week']\ncategorical_columns = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race', 'sex', 'native-country']\n\ntarget = 'salary'",
+                "code_line": "22-26"
+            },
+            {
+                "id": "node3",
+                "name": "Numeric Transformer",
+                "operation": "numeric_transformer",
+                "parameters": {
+                    "imputer_strategy": "mean"
+                },
+                "code": "numeric_transformer = Pipeline(steps=[\n    ('imputer', SimpleImputer(strategy='mean')),\n    ('scaler', StandardScaler())\n])",
+                "code_line": "28-31"
+            },
+            {
+                "id": "node4",
+                "name": "Categorical Transformer",
+                "operation": "categorical_transformer",
+                "parameters": {
+                    "imputer_strategy": "constant",
+                    "imputer_fill_value": "missing",
+                    "onehot_handle_unknown": "ignore"
+                },
+                "code": "categorical_transformer = Pipeline(steps=[\n    ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),\n    ('onehot', OneHotEncoder(handle_unknown='ignore'))\n])",
+                "code_line": "33-36"
+            },
+            {
+                "id": "node5",
+                "name": "Preprocessor",
+                "operation": "preprocessor",
+                "parameters": {},
+                "code": "preprocessor = ColumnTransformer(\n    transformers=[\n        ('num', numeric_transformer, numeric_columns),\n        ('cat', categorical_transformer, categorical_columns)\n    ])",
+                "code_line": "38-42"
+            },
+            {
+                "id": "node6",
+                "name": "Prepare Data",
+                "operation": "prepare_data",
+                "parameters": {},
+                "code": "X = data[numeric_columns + categorical_columns]\ny = data[target]",
+                "code_line": "44-45"
+            },
+            {
+                "id": "node7",
+                "name": "Label Encode Target",
+                "operation": "label_encode_target",
+                "parameters": {},
+                "code": "label_encoder = LabelEncoder()\ny_encoded = label_encoder.fit_transform(y)",
+                "code_line": "47-48"
+            },
+            {
+                "id": "node8",
+                "name": "Train Test Split",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "X_train, X_test, y_train, y_test = train_test_split(X, y_encoded, test_size=0.2, random_state=42)",
+                "code_line": "50"
+            },
+            {
+                "id": "node9",
+                "name": "Model Pipeline",
+                "operation": "model_pipeline",
+                "parameters": {},
+                "code": "model = Pipeline(steps=[\n    ('preprocessor', preprocessor),\n    ('classifier', LogisticRegression())\n])",
+                "code_line": "52-55"
+            },
+            {
+                "id": "node10",
+                "name": "Train Model",
+                "operation": "train_model",
+                "parameters": {},
+                "code": "model.fit(X_train, y_train)",
+                "code_line": "57"
+            },
+            {
+                "id": "node11",
+                "name": "Predict",
+                "operation": "predict",
+                "parameters": {},
+                "code": "y_pred = model.predict(X_test)",
+                "code_line": "59"
+            },
+            {
+                "id": "node12",
+                "name": "Evaluate",
+                "operation": "evaluate",
+                "parameters": {},
+                "code": "print(classification_report(y_test, y_pred, target_names=label_encoder.classes_))",
+                "code_line": "61"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node2",
+                "target": "node4"
+            },
+            {
+                "source": "node3",
+                "target": "node5"
+            },
+            {
+                "source": "node4",
+                "target": "node5"
+            },
+            {
+                "source": "node2",
+                "target": "node6"
+            },
+            {
+                "source": "node6",
+                "target": "node7"
+            },
+            {
+                "source": "node6",
+                "target": "node8"
+            },
+            {
+                "source": "node7",
+                "target": "node8"
+            },
+            {
+                "source": "node5",
+                "target": "node9"
+            },
+            {
+                "source": "node8",
+                "target": "node9"
+            },
+
+            {
+                "source": "node9",
+                "target": "node10"
+            },
+            {
+                "source": "node10",
+                "target": "node11"
+            },
+            {
+                "source": "node11",
+                "target": "node12"
+            }
+        ]
+    }
+}

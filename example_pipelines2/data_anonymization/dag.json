@@ -1,0 +1,101 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "data = pd.read_csv(raw_data_file)",
+                "code_line": "18"
+            },
+            {
+                "id": "node2",
+                "name": "Drop Columns",
+                "operation": "drop_columns",
+                "parameters": {
+                    "columns": [
+                        "education",
+                        "occupation"
+                    ]
+                },
+                "code": "data = data.drop(columns=['education', 'occupation'])",
+                "code_line": "20"
+            },
+            {
+                "id": "node3",
+                "name": "Label Encode",
+                "operation": "label_encode",
+                "parameters": {},
+                "code": "le = LabelEncoder()\nfor column in data.columns:\n    if data[column].dtype == 'object':\n        data[column] = le.fit_transform(data[column])",
+                "code_line": "22-25"
+            },
+            {
+                "id": "node4",
+                "name": "Split Data",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "X = data.drop(columns=['salary'])\ny = data['salary']\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+                "code_line": "27-29"
+            },
+            {
+                "id": "node5",
+                "name": "Train Random Forest",
+                "operation": "train_model",
+                "parameters": {
+                    "model": "RandomForestClassifier",
+                    "random_state": 42
+                },
+                "code": "model = RandomForestClassifier(random_state=42)\nmodel.fit(X_train, y_train)",
+                "code_line": "31-32"
+            },
+            {
+                "id": "node6",
+                "name": "Predict",
+                "operation": "predict",
+                "parameters": {},
+                "code": "y_pred = model.predict(X_test)",
+                "code_line": "34"
+            },
+            {
+                "id": "node7",
+                "name": "Evaluate",
+                "operation": "evaluate",
+                "parameters": {},
+                "code": "accuracy = accuracy_score(y_test, y_pred)\nprint(f'Accuracy: {accuracy}')\nprint(f'Classification report: {classification_report(y_test, y_pred)}')",
+                "code_line": "35-37"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node3",
+                "target": "node4"
+            },
+            {
+                "source": "node4",
+                "target": "node5"
+            },
+            {
+                "source": "node5",
+                "target": "node6"
+            },
+            {
+                "source": "node6",
+                "target": "node7"
+            }
+        ]
+    }
+}

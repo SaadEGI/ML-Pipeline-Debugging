@@ -1,0 +1,9 @@
+pipeline_code,model,detected,confidence
+../../example_pipelines2\cross_validation\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\data_anonymization\example-0.py,gpt-4o-mini,True,0.85
+../../example_pipelines2\data_filtering\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\data_imputation\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\data_leakage\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\data_slicing\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\data_splitting\example-0.py,gpt-4o-mini,False,0.95
+../../example_pipelines2\specification_bias\example-0.py,gpt-4o-mini,False,0.85

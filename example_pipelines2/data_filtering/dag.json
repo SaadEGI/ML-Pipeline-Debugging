@@ -1,0 +1,175 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "data = pd.read_csv(raw_data_file)",
+                "code_line": "18"
+            },
+            {
+                "id": "node2",
+                "name": "Print Raw Data Gender Distribution",
+                "operation": "print_value_counts",
+                "parameters": {
+                  "column": "Sex",
+                  "normalize": true,
+                  "round": 2
+                },
+                "code": "print(\"Raw data gender distribution:\\n\", data['Sex'].value_counts(normalize=True).round(2))",
+                "code_line": "20"
+            },
+            {
+                "id": "node3",
+                "name": "Filter Data",
+                "operation": "filter_data",
+                "parameters": {
+                    "conditions": [
+                        "Age > 4",
+                        "HighChol > 0"
+                    ]
+                },
+                "code": "data_filtered = data[data['Age'] > 4]\ndata_filtered = data_filtered[data_filtered['HighChol'] > 0]",
+                "code_line": "22-23"
+            },
+            {
+                "id": "node4",
+                "name": "Train Test Split",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "X = data_filtered.drop('Diabetes_binary', axis=1)\ny = data_filtered['Diabetes_binary']\nX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+                "code_line": "25-27"
+            },
+            {
+                "id": "node5",
+                "name": "Print Test Data Gender Distribution",
+                "operation": "print_value_counts",
+                 "parameters": {
+                  "column": "Sex",
+                  "normalize": true,
+                  "round": 2
+                },
+                "code": "print(\"Test set gender distribution:\\n\", X_test['Sex'].value_counts(normalize=True).round(2))",
+                "code_line": "29"
+            },
+            {
+                "id": "node6",
+                "name": "One-Hot Encode",
+                "operation": "one_hot_encode",
+                "parameters": {
+                    "drop": "first",
+                    "sparse_output": false,
+                    "handle_unknown": "ignore"
+                },
+                "code": "encoder = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')\nX_train_encoded = encoder.fit_transform(X_train.select_dtypes(include=['object']))\nX_test_encoded = encoder.transform(X_test.select_dtypes(include=['object']))",
+                "code_line": "31-33"
+            },
+            {
+                "id": "node7",
+                "name": "Create Encoded DataFrames",
+                "operation": "create_dataframes",
+                "parameters": {},
+                "code": "X_train_encoded_df = pd.DataFrame(X_train_encoded, columns=encoder.get_feature_names_out(X_train.select_dtypes(include=['object']).columns))\nX_test_encoded_df = pd.DataFrame(X_test_encoded, columns=encoder.get_feature_names_out(X_test.select_dtypes(include=['object']).columns))",
+                "code_line": "35-36"
+            },
+            {
+                "id": "node8",
+                "name": "Concatenate DataFrames",
+                "operation": "concatenate_dataframes",
+                "parameters": {},
+                "code": "X_train_final = pd.concat([X_train.select_dtypes(exclude=['object']).reset_index(drop=True), X_train_encoded_df.reset_index(drop=True)], axis=1)\nX_test_final = pd.concat([X_test.select_dtypes(exclude=['object']).reset_index(drop=True), X_test_encoded_df.reset_index(drop=True)], axis=1)",
+                "code_line": "38-39"
+            },
+            {
+                 "id": "node9",
+                "name": "Convert column types to string",
+                "operation": "convert_column_types",
+                "parameters": {},
+                "code": "X_train_final.columns = X_train_final.columns.astype(str)\nX_test_final.columns = X_test_final.columns.astype(str)",
+                "code_line": "41-42"
+
+            },
+            {
+                "id": "node10",
+                "name": "Train Logistic Regression",
+                "operation": "train_model",
+                "parameters": {
+                    "model": "LogisticRegression",
+                    "max_iter": 1000
+                },
+                "code": "model = LogisticRegression(max_iter=1000)\nmodel.fit(X_train_final, y_train)",
+                "code_line": "44-45"
+            },
+            {
+                "id": "node11",
+                "name": "Predict",
+                "operation": "predict",
+                "parameters": {},
+                "code": "y_pred = model.predict(X_test_final)",
+                "code_line": "47"
+            },
+            {
+                "id": "node12",
+                "name": "Print Classification Report",
+                "operation": "print_classification_report",
+                "parameters": {},
+                "code": "print(classification_report(y_test, y_pred))",
+                "code_line": "48"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node3",
+                "target": "node4"
+            },
+            {
+                "source": "node4",
+                "target": "node5"
+            },
+            {
+                "source": "node4",
+                "target": "node6"
+            },
+            {
+                "source": "node6",
+                "target": "node7"
+            },
+            {
+                "source": "node7",
+                "target": "node8"
+            },
+            {
+                "source": "node8",
+                "target": "node9"
+            },
+            {
+                "source": "node9",
+                "target": "node10"
+            },
+            {
+                "source": "node10",
+                "target": "node11"
+            },
+             {
+                "source": "node11",
+                "target": "node12"
+            }
+
+        ]
+    }
+}

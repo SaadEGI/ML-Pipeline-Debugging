@@ -1,0 +1,126 @@
+{
+    "dag": {
+        "nodes": [
+            {
+                "id": "node1",
+                "name": "Load Data",
+                "operation": "load_data",
+                "parameters": {
+                    "file_path": "raw_data_file"
+                },
+                "code": "raw_data = pd.read_csv(raw_data_file)",
+                "code_line": "18"
+            },
+            {
+                "id": "node2",
+                "name": "Prepare Data",
+                "operation": "prepare_data",
+                "parameters": {},
+                "code": "X = raw_data.drop('score_text', axis=1)\ny = raw_data['score_text']",
+                "code_line": "20-21"
+            },
+            {
+                "id": "node3",
+                "name": "Label Encode Features",
+                "operation": "label_encode_features",
+                "parameters": {},
+                "code": "label_encoders = {}\nfor column in X.select_dtypes(include=['object']).columns:\n    le = LabelEncoder()\n    X[column] = le.fit_transform(X[column].astype(str))\n    label_encoders[column] = le",
+                "code_line": "23-27"
+            },
+            {
+                "id": "node4",
+                "name": "Label Encode Target",
+                "operation": "label_encode_target",
+                "parameters": {},
+                "code": "le_y = LabelEncoder()\ny = le_y.fit_transform(y)",
+                "code_line": "29-30"
+            },
+            {
+                "id": "node5",
+                "name": "Train Test Split",
+                "operation": "train_test_split",
+                "parameters": {
+                    "test_size": 0.2,
+                    "random_state": 42
+                },
+                "code": "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)",
+                "code_line": "32"
+            },
+            {
+                "id": "node6",
+                "name": "Impute Missing Values",
+                "operation": "impute_missing_values",
+                "parameters": {
+                    "strategy": "most_frequent"
+                },
+                "code": "imputer = SimpleImputer(strategy='most_frequent')\nX_train_imputed = imputer.fit_transform(X_train)\nX_test_imputed = imputer.transform(X_test)",
+                "code_line": "34-36"
+            },
+            {
+                "id": "node7",
+                "name": "Train Random Forest",
+                "operation": "train_model",
+                "parameters": {
+                    "model": "RandomForestClassifier",
+                    "random_state": 42
+                },
+                "code": "clf = RandomForestClassifier(random_state=42)\nclf.fit(X_train_imputed, y_train)",
+                "code_line": "38-39"
+            },
+            {
+                "id": "node8",
+                "name": "Predict",
+                "operation": "predict",
+                "parameters": {},
+                "code": "y_pred = clf.predict(X_test_imputed)",
+                "code_line": "40"
+            },
+            {
+                "id": "node9",
+                "name": "Evaluate",
+                "operation": "evaluate",
+                "parameters": {},
+                "code": "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\nprint(\"Classification report:\", classification_report(y_test, y_pred))",
+                "code_line": "42-43"
+            }
+        ],
+        "edges": [
+            {
+                "source": "node1",
+                "target": "node2"
+            },
+            {
+                "source": "node2",
+                "target": "node3"
+            },
+            {
+                "source": "node2",
+                "target": "node4"
+            },
+            {
+                "source": "node3",
+                "target": "node5"
+            },
+             {
+                "source": "node4",
+                "target": "node5"
+            },
+            {
+                "source": "node5",
+                "target": "node6"
+            },
+            {
+                "source": "node6",
+                "target": "node7"
+            },
+            {
+                "source": "node7",
+                "target": "node8"
+            },
+            {
+                "source": "node8",
+                "target": "node9"
+            }
+        ]
+    }
+}
