@@ -1,25 +1,26 @@
-import logging
 import os
+import logging
 from pathlib import Path
 from typing import List, Dict, Any
 
-import dspy
 import pandas as pd
 from dotenv import load_dotenv
 from matplotlib import pyplot as plt
-
+import dspy
+from dspy import Evaluate  # if needed elsewhere
 from dspy_approach.utils import read_code_from_file
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Set base directory and load environment variables
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 dotenv_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=str(dotenv_path))
 
 
 def get_env_variable(key: str) -> str:
+    """Retrieve environment variable value or raise an error if not set."""
     value = os.getenv(key)
     if not value:
         logging.error(f"Missing environment variable: {key}")
@@ -34,17 +35,17 @@ openai_api_key = get_env_variable("OPENAI_API_KEY")
 gemini_api_key = get_env_variable("GEMINI_API_KEY")
 together_api_key = get_env_variable("TOGETHER_API_KEY")
 
-# Preconfigure some LM instances if needed elsewhere
+# Preconfigure LM instances if needed elsewhere
 lm_default = dspy.LM('openai/deepseek-chat', api_key=deepseek_api_key,
                      api_base="https://api.deepseek.com")
 deepseek_r1 = dspy.LM('openai/deepseek/deepseek-r1', api_key=deepseek_r1_api_key,
                       api_base="https://openrouter.ai/api/v1")
 
 
-# --- File loading and data preparation ---
+# --- File I/O and Data Preparation ---
 
 def load_lines(file_path: Path) -> List[str]:
-    """Read lines from a file, stripping whitespace."""
+    """Read non-empty lines from a text file."""
     try:
         return [line.strip() for line in file_path.read_text().splitlines() if line.strip()]
     except Exception as e:
@@ -52,56 +53,89 @@ def load_lines(file_path: Path) -> List[str]:
         return []
 
 
-def discover_pipelines(root_dir: Path, target_filename: str) -> List[Path]:
-    """Recursively find all files matching the target filename in the given directory."""
+def discover_files(root_dir: Path, target_filename: str) -> List[Path]:
+    """Recursively discover files with the given target filename."""
     return list(root_dir.rglob(target_filename))
 
 
-def prepare_dataframe(pipelines: List[Path], issue_names: List[str]) -> pd.DataFrame:
-    """Read each pipeline's code and combine with corresponding issue name into a DataFrame."""
+# Define paths for issue files
+issues_names_path = BASE_DIR / "pipelines_examples" / "issues_names.txt"
+issues_descriptions_path = BASE_DIR / "pipelines_examples" / "issues_descriptions.txt"
+issues_impact_path = BASE_DIR / "pipelines_examples" / "issues_impact.txt"
+pipeline_phase_path = BASE_DIR / "pipelines_examples" / "pipeline_phase.txt"
+
+# Load issue-related data
+issue_names = load_lines(issues_names_path)
+issue_descriptions = load_lines(issues_descriptions_path)  # Loaded but not used here
+issues_impact = load_lines(issues_impact_path)
+pipeline_phases = load_lines(pipeline_phase_path)
+
+# Discover pipeline and DAG files
+pipelines = discover_files(BASE_DIR / "pipelines_examples", "example-0.py")
+dags = discover_files(BASE_DIR / "pipelines_examples", "dag.json")
+logging.info(f"Found {len(pipelines)} pipelines and {len(dags)} DAG files.")
+
+
+def prepare_dataframe(pipelines: List[Path],
+                      dags: List[Path],
+                      issue_names: List[str],
+                      issues_impact: List[str],
+                      pipeline_phases: List[str]) -> pd.DataFrame:
+    """
+    Create a DataFrame combining code from pipelines and DAGs
+    with corresponding issue, impact, and phase details.
+    """
     data = []
-    for i, pipeline in enumerate(pipelines):
+    # Read pipeline code and corresponding DAG code.
+    pipelines_sorted = sorted(pipelines)
+    dags_sorted = sorted(dags)
+    if len(pipelines_sorted) != len(dags_sorted):
+        logging.warning("Number of pipelines and DAGs do not match; aligning by index.")
+
+    for i, pipeline in enumerate(pipelines_sorted):
         code = read_code_from_file(str(pipeline))
-        issue = issue_names[i] if i < len(issue_names) else "Unknown Issue"
+        dag_code = read_code_from_file(str(dags_sorted[i])) if i < len(dags_sorted) else ""
         data.append({
             "pipeline_code": code,
-            "issue_name": issue,
+            "dag": dag_code,
+            "issue_name": issue_names[i] if i < len(issue_names) else "Unknown Issue",
+            "issue_impact": issues_impact[i] if i < len(issues_impact) else "Unknown Impact",
+            "pipeline_phase": pipeline_phases[i] if i < len(pipeline_phases) else "Unknown Phase",
             "pipeline_path": str(pipeline)
         })
     return pd.DataFrame(data)
 
 
-# Load issues and pipeline paths
-issues_file = BASE_DIR / "pipelines_examples" / "issues_names.txt"
-issue_names = load_lines(issues_file)
-
-pipelines = discover_pipelines(BASE_DIR / "corrected_pipelines", "example-0-fixed.py")
-logging.info(f"Found {len(pipelines)} pipeline files.")
-
-df = prepare_dataframe(pipelines, issue_names)
+df = prepare_dataframe(pipelines, dags, issue_names, issues_impact, pipeline_phases)
 
 
 # --- dspy Signature and Prediction ---
 
 class CodeIssue(dspy.Signature):
     """
-    Analyze Python code to check if a specific issue is present.
+    Analyze Python code and DAG to determine if a specific issue is present.
 
     Inputs:
       - code: The Python code to analyze.
+      - dag: The DAG of the pipeline.
       - issue_name: The name of the issue to check.
-      - hint: A hint message to guide the analysis.
+      - potential_pipeline_phase: The pipeline phase.
+      - issue_impact: The impact of the issue.
 
     Outputs:
       - issue_detected: Boolean indicating if the issue was found.
-      - confidence: Float indicating the confidence in the result.
+      - relevant_code_issue: Excerpt of relevant code.
+      - fix: Suggested fix for the issue.
     """
     code: str = dspy.InputField()
+    dag: str = dspy.InputField()
     issue_name: str = dspy.InputField(desc="Name of the issue to check")
-    hint: str = dspy.InputField()
+    potential_pipeline_phase: str = dspy.InputField(desc="The pipeline phase")
+    issue_impact: str = dspy.InputField(desc="The impact of the issue")
 
     issue_detected: bool = dspy.OutputField()
-    confidence: float = dspy.OutputField()
+    relevant_code_issue: str = dspy.OutputField()
+    fix: str = dspy.OutputField()
 
 
 classify_code_issue = dspy.Predict(CodeIssue)
@@ -116,14 +150,14 @@ MODEL_CONFIGS: Dict[int, Dict[str, Any]] = {
         'cache': False,
         'model_name': "deepseek_v3"
     },
-    99: {
+    1: {
         'lm_id': 'openai/deepseek/deepseek-r1',
-        'api_key': deepseek_r1_api_key,
-        'api_base': "https://openrouter.ai/api/v1",
+        'api_key': together_api_key,
+        'api_base': "https://api.together.xyz/v1",
         'cache': False,
         'model_name': "deepseek_r1"
     },
-    1: {
+    99: {
         'lm_id': 'openai/deepseek-reasoner',
         'api_key': deepseek_api_key,
         'api_base': "https://api.deepseek.com",
@@ -152,7 +186,9 @@ MODEL_CONFIGS: Dict[int, Dict[str, Any]] = {
 
 
 def configure_model(model_index: int) -> (dspy.LM, str):
-    """Configure and return the LM instance and model name for the given index."""
+    """
+    Return a configured LM instance and its model name for the given index.
+    """
     config = MODEL_CONFIGS.get(model_index)
     if not config:
         raise ValueError(f"Invalid model index: {model_index}")
@@ -166,27 +202,31 @@ def configure_model(model_index: int) -> (dspy.LM, str):
 
 
 def classify_with_single_model(df: pd.DataFrame, model_index: int) -> pd.DataFrame:
-    """Run classification for each pipeline using the specified model."""
+    """
+    Run classification for each pipeline using the specified model.
+
+    Returns a DataFrame of results.
+    """
     lm_instance, model_name = configure_model(model_index)
     dspy.configure(lm=lm_instance)
 
     results = []
     for idx, row in df.iterrows():
-        code = row['pipeline_code']
-        issue_to_check = row['issue_name']
-        logging.info(f"Processing pipeline: {row['pipeline_path']} | Issue: {issue_to_check}")
         classification = classify_code_issue(
-            code=code,
-            issue_name=issue_to_check,
-            hint="it is possible that the code pipeline does not contain the issue."
+            code=row['pipeline_code'],
+            dag=row['dag'],
+            issue_name=row['issue_name'],
+            potential_pipeline_phase=row['pipeline_phase'],
+            issue_impact=row['issue_impact']
         )
         logging.info(
-            f"Model: {model_name}, Detected: {classification.issue_detected}, Confidence: {classification.confidence}")
+            f"Model: {model_name} | Pipeline: {row['pipeline_path']} | Detected: {classification.issue_detected}")
         results.append({
             "pipeline_code": row['pipeline_path'],
             "model": model_name,
             "detected": classification.issue_detected,
-            "confidence": classification.confidence
+            "relevant_code_issue": classification.relevant_code_issue,
+            "fix": classification.fix
         })
     results_df = pd.DataFrame(results)
     output_file = Path(f"{model_name}_results.csv")
@@ -195,8 +235,39 @@ def classify_with_single_model(df: pd.DataFrame, model_index: int) -> pd.DataFra
     return results_df
 
 
+# --- Save Relevant Code and Fixes ---
+
+def save_relevant_code_and_fix(models: List[str], output_filename: str = "issue_fixes.csv") -> None:
+    """
+    Save relevant code excerpts and fixes for detected issues across models.
+    """
+    issue_fixes = []
+    for model in models:
+        result_file = Path(f"{model}_results.csv")
+        if result_file.is_file():
+            df_model = pd.read_csv(result_file)
+            for _, row in df_model.iterrows():
+                if row['detected']:
+                    issue_fixes.append({
+                        "model": model,
+                        "relevant_code_issue": row['relevant_code_issue'],
+                        "issue_name": row['pipeline_code'],
+                        "fix": row['fix']
+                    })
+    if issue_fixes:
+        df_issue_fixes = pd.DataFrame(issue_fixes)
+        df_issue_fixes.to_csv(output_filename, index=False)
+        logging.info(f"Issue fixes saved to {output_filename}")
+    else:
+        logging.info("No detected issues found; nothing to save.")
+
+
+# --- Visualization ---
+
 def visualize_results(model_list: List[str]) -> None:
-    """Visualize prediction confidence per model."""
+    """
+    Visualize prediction confidence per model.
+    """
     visualization_data = []
     for model in model_list:
         result_file = Path(f"{model}_results.csv")
@@ -207,15 +278,14 @@ def visualize_results(model_list: List[str]) -> None:
                     "model": model,
                     "pipeline_index": idx,
                     "issue_detected": row['detected'],
-                    "confidence": row['confidence']
+                    "confidence": row.get('confidence', None)
                 })
     if not visualization_data:
         logging.warning("No visualization data available.")
         return
 
     df_vis = pd.DataFrame(visualization_data)
-    # Map detection to colors (red for detected, green for not detected)
-    df_vis['color'] = df_vis['issue_detected'].map({True: 'red', False: 'green'})
+    df_vis['color'] = df_vis['issue_detected'].map({True: 'green', False: 'red'})
     unique_models = df_vis['model'].unique()
 
     fig, axes = plt.subplots(1, len(unique_models), figsize=(14, 6), sharey=True)
@@ -227,14 +297,15 @@ def visualize_results(model_list: List[str]) -> None:
         ax.set_ylim(0, 1.1)
         ax.grid(True)
     axes[0].set_ylabel("Confidence")
-    plt.suptitle("Prediction per Model")
+    plt.suptitle("Prediction Confidence per Model")
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.show()
 
 
-# Execute classification with a chosen model (uncomment additional calls as needed)
+# --- Main Execution ---
+
 if __name__ == "__main__":
-    # Example calls (you may uncomment as needed, each number corresponds to a different model
+    # Uncomment the desired model runs
     # 0: DeepSeek V3
     # 1: DeepSeek R1
     # 2: GPT-4o Mini
@@ -247,4 +318,10 @@ if __name__ == "__main__":
     classify_with_single_model(df, 3)
     classify_with_single_model(df, 4)
 
-    visualize_results(["deepseek_v3", "deepseek_r1_reasoner", "gpt-4o-mini", "gemini-2.0-flash-001", "gpt-4o"])
+
+    # Save relevant code issues and fixes from selected models
+    model_names = ["deepseek_v3", "deepseek_r1_reasoner", "gpt-4o-mini", "gemini-2.0-flash-001", "gpt-4o"]
+    save_relevant_code_and_fix(model_names)
+
+    # Visualize results for selected models
+    visualize_results(model_names)

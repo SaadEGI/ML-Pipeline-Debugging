@@ -1,9 +1,9 @@
 pipeline_code,model,detected,confidence
-../../example_pipelines2\cross_validation\example-0.py,deepseek_v3,False,0.9
-../../example_pipelines2\data_anonymization\example-0.py,deepseek_v3,False,0.85
-../../example_pipelines2\data_filtering\example-0.py,deepseek_v3,True,0.85
-../../example_pipelines2\data_imputation\example-0.py,deepseek_v3,True,0.85
-../../example_pipelines2\data_leakage\example-0.py,deepseek_v3,False,0.95
-../../example_pipelines2\data_slicing\example-0.py,deepseek_v3,False,0.85
-../../example_pipelines2\data_splitting\example-0.py,deepseek_v3,False,0.95
-../../example_pipelines2\specification_bias\example-0.py,deepseek_v3,False,0.85
+../../pipelines_examples\cross_validation\example-0.py,deepseek_v3,False,0.9
+../../pipelines_examples\data_anonymization\example-0.py,deepseek_v3,False,0.85
+../../pipelines_examples\data_filtering\example-0.py,deepseek_v3,True,0.85
+../../pipelines_examples\data_imputation\example-0.py,deepseek_v3,True,0.85
+../../pipelines_examples\data_leakage\example-0.py,deepseek_v3,False,0.95
+../../pipelines_examples\data_slicing\example-0.py,deepseek_v3,False,0.85
+../../pipelines_examples\data_splitting\example-0.py,deepseek_v3,False,0.95
+../../pipelines_examples\specification_bias\example-0.py,deepseek_v3,False,0.85
